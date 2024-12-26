@@ -30,7 +30,7 @@ import 'package:nepali_utils/nepali_utils.dart';
 import '../../flutter_bs_ad_calendar.dart';
 
 class MonthName extends StatelessWidget {
-  MonthName({
+  const MonthName({
     super.key,
     required this.date,
     required this.calendarType,
@@ -41,7 +41,7 @@ class MonthName extends StatelessWidget {
   final DateTime date;
   final CalendarType calendarType;
   final Color? primaryColor;
-  double? headerheight;
+  final double? headerheight;
 
   @override
   Widget build(BuildContext context) {
