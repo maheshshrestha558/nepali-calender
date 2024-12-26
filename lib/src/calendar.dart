@@ -28,14 +28,66 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 import '../flutter_bs_ad_calendar.dart';
 
-const Duration _monthScrollDuration = Duration(milliseconds: 200);
-
 typedef OnSelectedDate<T> = Function(T selectedDate, List<Event>? events);
 typedef OnMonthChanged<T> = Function(T selectedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
+  /// The [CalendarType] displayed in the calendar.
+  final CalendarType calendarType;
+
+  /// The initially selected [DateTime] that the picker should display.
+  final DateTime initialDate;
+
+  /// The earliest date the user is permitted to pick [lastDate].
+  final DateTime firstDate;
+
+  /// The latest date the user is permitted to pick [firstDate].
+  final DateTime lastDate;
+
+  /// The List of holiday dates.
+  final List<DateTime>? holidays;
+
+  /// List of events assigned to a specified day.
+  final List<Event>? events;
+
+  /// Weather Start of the week is [Sunday] or [Monday].
+  final bool mondayWeek;
+  final BuildContext? context;
+
+  /// List of days in week to be considered as weekend.
+  /// Use built-in [DateTime] weekday constants (e.g '1' is for 'DateTime.monday')
+  final List<int> weekendDays;
+
+  /// Primary calendar theme color
+  final Color? primaryColor;
+
+  /// Week name color
+  final Color? weekColor;
+
+  /// Holiday calendar theme color
+  final Color? holidayColor;
+
+  /// Event calendar theme color
+  final Color? eventColor;
+
+  /// Decoration for today's cell.
+  final BoxDecoration? todayDecoration;
+
+  /// Decoration for selected day's cell.
+  final BoxDecoration? selectedDayDecoration;
+
+  /// Builds the widget for particular day.
+  final Widget Function(DateTime)? dayBuilder;
+
+  /// Called when the user picks a day.
+  final OnSelectedDate onDateSelected;
+  final double? headerheight;
+
+  /// Called when the user changes month.
+  final OnMonthChanged? onMonthChanged;
   FlutterBSADCalendar({
     super.key,
+    this.context,
     this.calendarType = CalendarType.bs,
     required DateTime initialDate,
     required DateTime firstDate,
@@ -71,64 +123,11 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     );
   }
 
-  /// The [CalendarType] displayed in the calendar.
-  final CalendarType calendarType;
-
-  /// The initially selected [DateTime] that the picker should display.
-  final DateTime initialDate;
-
-  /// The earliest date the user is permitted to pick [lastDate].
-  final DateTime firstDate;
-
-  /// The latest date the user is permitted to pick [firstDate].
-  final DateTime lastDate;
-
-  /// The List of holiday dates.
-  final List<DateTime>? holidays;
-
-  /// List of events assigned to a specified day.
-  final List<Event>? events;
-
-  /// Weather Start of the week is [Sunday] or [Monday].
-  final bool mondayWeek;
-
-  /// List of days in week to be considered as weekend.
-  /// Use built-in [DateTime] weekday constants (e.g '1' is for 'DateTime.monday')
-  final List<int> weekendDays;
-
-  /// Primary calendar theme color
-  final Color? primaryColor;
-
-  /// Week name color
-  final Color? weekColor;
-
-  /// Holiday calendar theme color
-  final Color? holidayColor;
-
-  /// Event calendar theme color
-  final Color? eventColor;
-  double? headerheight;
-
-  /// Decoration for today's cell.
-  final BoxDecoration? todayDecoration;
-
-  /// Decoration for selected day's cell.
-  final BoxDecoration? selectedDayDecoration;
-
-  /// Builds the widget for particular day.
-  final Widget Function(DateTime)? dayBuilder;
-
-  /// Called when the user picks a day.
-  final OnSelectedDate onDateSelected;
-
-  /// Called when the user changes month.
-  final OnMonthChanged? onMonthChanged;
-
   @override
-  State<FlutterBSADCalendar> createState() => _FlutterBSADCalendarState();
+  State<FlutterBSADCalendar<T>> createState() => _FlutterBSADCalendarState<T>();
 }
 
-class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
+class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
   late PageController _pageController;
   late List<DateTime> _daysInMonth;
   late DateTime _selectedDate;
@@ -152,9 +151,10 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      const Duration monthScrollDuration = Duration(milliseconds: 100);
       _pageController.animateToPage(
         DateTime.now().month - 1,
-        duration: _monthScrollDuration,
+        duration: monthScrollDuration,
         curve: Curves.easeInOut,
       );
     });
@@ -285,7 +285,33 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
     return false;
   }
 
-  Widget _buildWeekRow(BuildContext context, int index) {
+  // Widget _buildWeekRow(BuildContext context, int index) {}
+
+  Widget _buildYearPicker() {
+    switch (widget.calendarType) {
+      case CalendarType.ad:
+        return YearPicker(
+          currentDate: _selectedDate,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
+          initialDate: _focusedDate,
+          selectedDate: _selectedDate,
+          onChanged: _handleYearChanged,
+        );
+      case CalendarType.bs:
+        return NepaliYearPicker(
+          currentDate: _selectedDate.toNepaliDateTime(),
+          firstDate: widget.firstDate.toNepaliDateTime(),
+          lastDate: widget.lastDate.toNepaliDateTime(),
+          initialDate: _focusedDate.toNepaliDateTime(),
+          selectedDate: _selectedDate.toNepaliDateTime(),
+          onChanged: (date) => _handleYearChanged(date.toDateTime()),
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     _daysInMonth = widget.calendarType == CalendarType.bs
         ? _nepaliDaysInMonth(_focusedDate)
         : _englishDaysInMonth(_focusedDate);
@@ -300,166 +326,11 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
           ? Utils.nepaliWeek
           : Utils.englishWeek;
     }
-
-    return Stack(
-      children: [
-        Table(
-          children: <TableRow>[
-            TableRow(
-              children: weeks
-                  .map(
-                    (day) => Center(
-                      child: Text(
-                        day,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: widget.weekColor ??
-                                Theme.of(context).textTheme.titleSmall?.color),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: _daysInMonth.length,
-            padding: EdgeInsets.zero,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-            ),
-            itemBuilder: (context, dayIndex) {
-              DateTime dayToBuild = _daysInMonth[dayIndex];
-              Color? mainDayColor;
-              Color? secondaryDayColor =
-                  Theme.of(context).textTheme.bodyMedium?.color;
-              BoxDecoration decoration = const BoxDecoration();
-              if (Utils.isSameDay(dayToBuild, _selectedDate) &&
-                  Utils.isSameMonth(
-                      widget.calendarType, _focusedDate, dayToBuild)) {
-                mainDayColor = Colors.white;
-                decoration = widget.selectedDayDecoration ??
-                    BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor,
-                      ),
-                      shape: BoxShape.circle,
-                    );
-              } else if (Utils.isToday(dayToBuild)) {
-                mainDayColor = Theme.of(context).primaryColorDark;
-                decoration = widget.todayDecoration ??
-                    BoxDecoration(
-                      color: Theme.of(context).primaryColorLight,
-                      shape: BoxShape.circle,
-                    );
-              } else if (!Utils.isSameMonth(
-                  widget.calendarType, _focusedDate, dayToBuild)) {
-                mainDayColor = Colors.grey.withOpacity(0.5);
-                secondaryDayColor = Colors.grey.withOpacity(0.5);
-              } else if (Utils.isWeekend(dayToBuild,
-                  weekendDays: widget.weekendDays)) {
-                mainDayColor = widget.holidayColor ??
-                    Theme.of(context).colorScheme.secondary;
-              } else if (Utils.holidays(dayToBuild, widget.holidays)) {
-                mainDayColor = widget.holidayColor ??
-                    Theme.of(context).colorScheme.secondary;
-              } else {
-                mainDayColor = Theme.of(context).textTheme.bodyMedium?.color;
-              }
-
-              return GestureDetector(
-                onTap: () {
-                  if (Utils.isSameMonth(
-                      widget.calendarType, _focusedDate, dayToBuild)) {
-                    _handleDateSelected(dayToBuild);
-                  }
-                },
-                child: Container(
-                  decoration: decoration,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 3.0,
-                    vertical: 2.0,
-                  ),
-                  child: Stack(
-                    children: [
-                      widget.dayBuilder == null
-                          ? DayBuilder(
-                              dayToBuild: dayToBuild,
-                              calendarType: widget.calendarType,
-                              dayColor: mainDayColor,
-                              secondaryDayColor: secondaryDayColor,
-                            )
-                          : widget.dayBuilder!(dayToBuild),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Visibility(
-                          visible: _checkEventOnDate(dayToBuild),
-                          child: Container(
-                            width: 5.0,
-                            height: 5.0,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                              vertical: 10.0,
-                            ),
-                            decoration: BoxDecoration(
-                              color: widget.eventColor ??
-                                  Theme.of(context).colorScheme.secondary,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(1000.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildYearPicker() {
-    switch (widget.calendarType) {
-      case CalendarType.ad:
-        return SizedBox(
-          width: double.infinity,
-          child: YearPicker(
-            currentDate: _selectedDate,
-            firstDate: widget.firstDate,
-            lastDate: widget.lastDate,
-            initialDate: _focusedDate,
-            selectedDate: _selectedDate,
-            onChanged: _handleYearChanged,
-          ),
-        );
-      case CalendarType.bs:
-        return SizedBox(
-          width: double.infinity,
-          child: NepaliYearPicker(
-            currentDate: _selectedDate.toNepaliDateTime(),
-            firstDate: widget.firstDate.toNepaliDateTime(),
-            lastDate: widget.lastDate.toNepaliDateTime(),
-            initialDate: _focusedDate.toNepaliDateTime(),
-            selectedDate: _selectedDate.toNepaliDateTime(),
-            onChanged: (date) => _handleYearChanged(date.toDateTime()),
-          ),
-        );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -479,8 +350,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                   children: [
                     IconButton(
                       icon: Icon(
-                        Icons.arrow_back_ios,
-                        size: 20.0,
+                        Icons.chevron_left,
+                        size: 30.0,
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
@@ -491,8 +362,8 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
                     ),
                     IconButton(
                       icon: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20.0,
+                        Icons.chevron_right,
+                        size: 30.0,
                         color: widget.primaryColor ??
                             Theme.of(context).primaryColor,
                       ),
@@ -507,25 +378,149 @@ class _FlutterBSADCalendarState extends State<FlutterBSADCalendar> {
             ],
           ),
         ),
-        const SizedBox(height: 5.0), // Optional
-        _displayType == DatePickerMode.day
-            ? Expanded(
-                child: PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: _pageController,
-                  pageSnapping: true,
-                  padEnds: true,
-                  allowImplicitScrolling: true,
-                  itemCount:
-                      DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
-                          1,
-                  itemBuilder: _buildWeekRow,
-                  onPageChanged: _handleMonthPageChanged,
-                ),
-              )
-            : Expanded(
-                child: _buildYearPicker(),
+        const SizedBox(height: 5.0),
+        if (_displayType == DatePickerMode.day)
+          Table(
+            children: <TableRow>[
+              TableRow(
+                children: weeks
+                    .map(
+                      (day) => Center(
+                        child: Text(
+                          day,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                  color: widget.weekColor ??
+                                      Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.color),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
+            ],
+          ),
+        const SizedBox(height: 5.0),
+        Flexible(
+          child: PageView.builder(
+            controller: _pageController,
+            allowImplicitScrolling: true,
+            scrollDirection: Axis.horizontal,
+            itemCount:
+                DateUtils.monthDelta(widget.firstDate, widget.lastDate) + 1,
+            itemBuilder: (context, dayIndex) {
+              return GridView.builder(
+                itemCount: _daysInMonth.length,
+                gridDelegate: _daysInMonth.length == 35
+                    ? SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: weeks.length, mainAxisExtent: 60)
+                    : SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: weeks.length, mainAxisExtent: 50),
+                itemBuilder: (context, dayIndex) {
+                  DateTime dayToBuild = _daysInMonth[dayIndex];
+                  Color? mainDayColor;
+                  Color? secondaryDayColor =
+                      Theme.of(context).textTheme.bodyMedium?.color;
+                  BoxDecoration decoration = const BoxDecoration();
+
+                  if (Utils.isSameDay(dayToBuild, _selectedDate) &&
+                      Utils.isSameMonth(
+                          widget.calendarType, _focusedDate, dayToBuild)) {
+                    mainDayColor = Colors.white;
+                    decoration = widget.selectedDayDecoration ??
+                        BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          shape: BoxShape.circle,
+                        );
+                  } else if (Utils.isToday(dayToBuild)) {
+                    mainDayColor = Theme.of(context).primaryColorDark;
+                    decoration = widget.todayDecoration ??
+                        BoxDecoration(
+                          color: Theme.of(context).primaryColorLight,
+                          shape: BoxShape.circle,
+                        );
+                  } else if (!Utils.isSameMonth(
+                      widget.calendarType, _focusedDate, dayToBuild)) {
+                    mainDayColor = Colors.grey.withOpacity(0.5);
+                    secondaryDayColor = Colors.grey.withOpacity(0.5);
+                  } else if (Utils.isWeekend(dayToBuild,
+                      weekendDays: widget.weekendDays)) {
+                    mainDayColor = widget.holidayColor ??
+                        Theme.of(context).colorScheme.secondary;
+                  } else if (Utils.holidays(dayToBuild, widget.holidays)) {
+                    mainDayColor = widget.holidayColor ??
+                        Theme.of(context).colorScheme.secondary;
+                  } else {
+                    mainDayColor =
+                        Theme.of(context).textTheme.bodyMedium?.color;
+                  }
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (Utils.isSameMonth(
+                          widget.calendarType, _focusedDate, dayToBuild)) {
+                        _handleDateSelected(dayToBuild);
+                      }
+                    },
+                    child: Container(
+                      decoration: decoration,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 3.0,
+                        vertical: 2.0,
+                      ),
+                      child: Stack(
+                        children: [
+                          widget.dayBuilder == null
+                              ? DayBuilder(
+                                  dayToBuild: dayToBuild,
+                                  calendarType: widget.calendarType,
+                                  dayColor: mainDayColor,
+                                  secondaryDayColor: secondaryDayColor,
+                                )
+                              : widget.dayBuilder!(dayToBuild),
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Visibility(
+                              visible: _checkEventOnDate(dayToBuild),
+                              child: Container(
+                                width: 5.0,
+                                height: 5.0,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10.0,
+                                  vertical: 10.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: widget.eventColor ??
+                                      Theme.of(context).colorScheme.secondary,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(1000.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            onPageChanged: _handleMonthPageChanged,
+          ),
+        ),
+        // _displayType == DatePickerMode.day
+        //     ?
+        //     : Expanded(
+        //         child: _buildYearPicker(),
+        //       ),
       ],
     );
   }
