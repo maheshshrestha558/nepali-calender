@@ -65,8 +65,8 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
               mondayWeek: false,
               weekendDays: const [DateTime.saturday],
               holidays: _holidays,
-              primaryColor: Colors.purple,
-              weekColor: Colors.cyan,
+              primaryColor: Colors.black,
+              weekColor: Colors.black,
               holidayColor: Colors.deepOrange,
               todayDecoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),

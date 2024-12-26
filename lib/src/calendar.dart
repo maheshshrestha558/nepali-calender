@@ -413,8 +413,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                   itemCount:
                       DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
                           1,
-                  itemBuilder: (context, dayIndex) {
+                  onPageChanged: _handleMonthPageChanged,
+                  itemBuilder: (context, index) {
                     return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: _daysInMonth.length,
                       gridDelegate: _daysInMonth.length == 35
                           ? SliverGridDelegateWithFixedCrossAxisCount(
@@ -517,7 +519,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                       },
                     );
                   },
-                  onPageChanged: _handleMonthPageChanged,
                 ),
               )
             : Expanded(
