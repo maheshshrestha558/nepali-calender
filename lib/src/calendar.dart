@@ -406,7 +406,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           ),
         const SizedBox(height: 5.0),
         _displayType == DatePickerMode.day
-            ? Flexible(
+            ? Expanded(
                 child: PageView.builder(
                   controller: _pageController,
                   scrollDirection: Axis.horizontal,
@@ -418,11 +418,12 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                     return GridView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _daysInMonth.length,
+                      padding: EdgeInsets.zero,
                       gridDelegate: _daysInMonth.length == 35
                           ? SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: weeks.length, mainAxisExtent: 60)
+                              crossAxisCount: weeks.length, mainAxisExtent: 55)
                           : SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: weeks.length, mainAxisExtent: 50),
+                              crossAxisCount: weeks.length, mainAxisExtent: 45),
                       itemBuilder: (context, dayIndex) {
                         DateTime dayToBuild = _daysInMonth[dayIndex];
                         Color? mainDayColor;
