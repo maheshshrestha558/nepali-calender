@@ -409,7 +409,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
             ? Flexible(
                 child: PageView.builder(
                   controller: _pageController,
-                  allowImplicitScrolling: true,
                   scrollDirection: Axis.horizontal,
                   itemCount:
                       DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
