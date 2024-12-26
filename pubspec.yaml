@@ -6,13 +6,13 @@ homepage: https://github.com/BwesShr/flutter_bs_ad_calendar
 
 environment:
   sdk: '>=2.19.1 <3.0.0'
-  flutter: ">=1.17.0"
+  flutter: '>=3.10.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
   intl: ^0.19.0
-  nepali_utils: ^3.0.3
+  nepali_utils: ^3.0.6
 
 dev_dependencies:
   flutter_test:
