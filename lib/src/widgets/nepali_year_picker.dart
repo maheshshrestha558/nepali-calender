@@ -92,10 +92,13 @@ class _NepaliYearPickerState extends State<NepaliYearPicker> {
     double itemHeight = 50;
 
     return Column(
+      key: widget.key,
       children: <Widget>[
         const Divider(),
         Expanded(
+          key: widget.key,
           child: GridView.builder(
+            key: widget.key,
             controller: _scrollController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
@@ -138,18 +141,23 @@ class _NepaliYearPickerState extends State<NepaliYearPicker> {
               }
 
               return InkWell(
+                key: widget.key,
                 onTap: () => widget.onChanged(NepaliDateTime(
                     year, widget.initialDate.month, widget.initialDate.day)),
                 child: Center(
                   child: Container(
+                    key: widget.key,
                     decoration: decoration,
                     height: 36.0,
                     width: 72.0,
                     child: Center(
+                      key: widget.key,
                       child: Semantics(
+                        key: widget.key,
                         selected: isSelected,
                         button: true,
                         child: Text(
+                          key: widget.key,
                           year.toString(),
                           style: Theme.of(context)
                               .textTheme

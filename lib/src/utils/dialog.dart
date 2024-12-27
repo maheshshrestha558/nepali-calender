@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../flutter_bs_ad_calendar.dart';
 
 Future<DateTime?> showFlutterBSADCalendarDialog({
+  Key? key,
   required BuildContext context,
   CalendarType? calendarType,
   List<DateTime?> value = const [],
@@ -16,6 +17,7 @@ Future<DateTime?> showFlutterBSADCalendarDialog({
   String? barrierLabel,
 }) {
   var dialog = Dialog(
+    key: key,
     insetPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
     backgroundColor: dialogBackgroundColor ?? Theme.of(context).canvasColor,
     shape: RoundedRectangleBorder(
@@ -23,6 +25,7 @@ Future<DateTime?> showFlutterBSADCalendarDialog({
     ),
     clipBehavior: Clip.antiAlias,
     child: Container(
+      key: key,
       height: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       child: FlutterBSADCalendar(

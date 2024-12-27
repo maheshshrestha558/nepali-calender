@@ -55,37 +55,35 @@ class _FeatureCalendarState extends State<FeatureCalendar> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: FlutterBSADCalendar(
-              context: context,
-              headerheight: 50,
-              calendarType: _calendarType,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(1970),
-              lastDate: DateTime(2100),
-              mondayWeek: false,
-              weekendDays: const [DateTime.saturday],
-              holidays: _holidays,
-              primaryColor: Colors.black,
-              weekColor: Colors.black,
-              holidayColor: Colors.deepOrange,
-              todayDecoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                color: Theme.of(context).primaryColorLight,
-                shape: BoxShape.rectangle,
-              ),
-              selectedDayDecoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                color: Theme.of(context).primaryColorDark,
-                shape: BoxShape.rectangle,
-              ),
-              onMonthChanged: (date, events) {
-                setState(() => selectedDate = date);
-              },
-              onDateSelected: (date, events) {
-                setState(() => selectedDate = date);
-              },
+          FlutterBSADCalendar(
+            key: widget.key,
+            headerheight: 50,
+            calendarType: _calendarType,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1970),
+            lastDate: DateTime(2100),
+            mondayWeek: false,
+            weekendDays: const [DateTime.saturday],
+            holidays: _holidays,
+            primaryColor: Colors.black,
+            weekColor: Colors.black,
+            holidayColor: Colors.deepOrange,
+            todayDecoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).primaryColorLight,
+              shape: BoxShape.rectangle,
             ),
+            selectedDayDecoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              color: Theme.of(context).primaryColorDark,
+              shape: BoxShape.rectangle,
+            ),
+            onMonthChanged: (date, events) {
+              setState(() => selectedDate = date);
+            },
+            onDateSelected: (date, events) {
+              setState(() => selectedDate = date);
+            },
           ),
           Expanded(
             child: ListView.builder(

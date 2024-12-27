@@ -85,13 +85,13 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Called when the user changes month.
   final OnMonthChanged? onMonthChanged;
-  FlutterBSADCalendar({
-    super.key,
+  const FlutterBSADCalendar({
+    Key? key,
     this.context,
     this.calendarType = CalendarType.bs,
-    required DateTime initialDate,
-    required DateTime firstDate,
-    required DateTime lastDate,
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
     this.holidays,
     this.mondayWeek = false,
     this.weekendDays = const [DateTime.saturday],
@@ -106,22 +106,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.headerheight,
     required this.onDateSelected,
     this.onMonthChanged,
-  })  : initialDate = DateUtils.dateOnly(initialDate),
-        firstDate = DateUtils.dateOnly(firstDate),
-        lastDate = DateUtils.dateOnly(lastDate) {
-    assert(
-      !this.lastDate.isBefore(this.firstDate),
-      'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.',
-    );
-    assert(
-      !this.initialDate.isBefore(this.firstDate),
-      'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.',
-    );
-    assert(
-      !this.initialDate.isAfter(this.lastDate),
-      'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.',
-    );
-  }
+  }) : super(key: key);
 
   @override
   State<FlutterBSADCalendar<T>> createState() => _FlutterBSADCalendarState<T>();
@@ -291,6 +276,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     switch (widget.calendarType) {
       case CalendarType.ad:
         return YearPicker(
+          key: widget.key,
           currentDate: _selectedDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
@@ -326,206 +312,214 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           ? Utils.nepaliWeek
           : Utils.englishWeek;
     }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: _handleDisplayTypeChanged,
-                child: MonthName(
-                  headerheight: widget.headerheight,
-                  date: _focusedDate,
-                  primaryColor: widget.primaryColor,
-                  calendarType: widget.calendarType,
+    return Expanded(
+      key: widget.key,
+      child: Column(
+        key: widget.key,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: _handleDisplayTypeChanged,
+                  child: MonthName(
+                    headerheight: widget.headerheight,
+                    date: _focusedDate,
+                    primaryColor: widget.primaryColor,
+                    calendarType: widget.calendarType,
+                  ),
                 ),
-              ),
-              Visibility(
-                visible: _displayType == DatePickerMode.day,
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.chevron_left,
-                        size: 30.0,
-                        color: widget.primaryColor ??
-                            Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () => Utils.isDisplayingFirstMonth(
-                              widget.firstDate, _selectedDate)
-                          ? null
-                          : _handleMonthPageChanged(_currentMonthIndex - 1),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.chevron_right,
-                        size: 30.0,
-                        color: widget.primaryColor ??
-                            Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () => Utils.isDisplayingLastMonth(
-                              widget.lastDate, _selectedDate)
-                          ? null
-                          : _handleMonthPageChanged(_currentMonthIndex + 1),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 5.0),
-        if (_displayType == DatePickerMode.day)
-          Table(
-            children: <TableRow>[
-              TableRow(
-                children: weeks
-                    .map(
-                      (day) => Center(
-                        child: Text(
-                          day,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(
-                                  color: widget.weekColor ??
-                                      Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.color),
+                Visibility(
+                  visible: _displayType == DatePickerMode.day,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.chevron_left,
+                          size: 30.0,
+                          color: widget.primaryColor ??
+                              Theme.of(context).primaryColor,
                         ),
+                        onPressed: () => Utils.isDisplayingFirstMonth(
+                                widget.firstDate, _selectedDate)
+                            ? null
+                            : _handleMonthPageChanged(_currentMonthIndex - 1),
                       ),
-                    )
-                    .toList(),
-              ),
-            ],
+                      IconButton(
+                        icon: Icon(
+                          Icons.chevron_right,
+                          size: 30.0,
+                          color: widget.primaryColor ??
+                              Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () => Utils.isDisplayingLastMonth(
+                                widget.lastDate, _selectedDate)
+                            ? null
+                            : _handleMonthPageChanged(_currentMonthIndex + 1),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        const SizedBox(height: 5.0),
-        _displayType == DatePickerMode.day
-            ? Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount:
-                      DateUtils.monthDelta(widget.firstDate, widget.lastDate) +
-                          1,
-                  onPageChanged: _handleMonthPageChanged,
-                  itemBuilder: (context, index) {
-                    return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _daysInMonth.length,
-                      padding: EdgeInsets.zero,
-                      gridDelegate: _daysInMonth.length == 35
-                          ? SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: weeks.length, mainAxisExtent: 55)
-                          : SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: weeks.length, mainAxisExtent: 45),
-                      itemBuilder: (context, dayIndex) {
-                        DateTime dayToBuild = _daysInMonth[dayIndex];
-                        Color? mainDayColor;
-                        Color? secondaryDayColor =
-                            Theme.of(context).textTheme.bodyMedium?.color;
-                        BoxDecoration decoration = const BoxDecoration();
-
-                        if (Utils.isSameDay(dayToBuild, _selectedDate) &&
-                            Utils.isSameMonth(widget.calendarType, _focusedDate,
-                                dayToBuild)) {
-                          mainDayColor = Colors.white;
-                          decoration = widget.selectedDayDecoration ??
-                              BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                border: Border.all(
-                                  color: Theme.of(context).dividerColor,
-                                ),
-                                shape: BoxShape.circle,
-                              );
-                        } else if (Utils.isToday(dayToBuild)) {
-                          mainDayColor = Theme.of(context).primaryColorDark;
-                          decoration = widget.todayDecoration ??
-                              BoxDecoration(
-                                color: Theme.of(context).primaryColorLight,
-                                shape: BoxShape.circle,
-                              );
-                        } else if (!Utils.isSameMonth(
-                            widget.calendarType, _focusedDate, dayToBuild)) {
-                          mainDayColor = Colors.grey.withOpacity(0.5);
-                          secondaryDayColor = Colors.grey.withOpacity(0.5);
-                        } else if (Utils.isWeekend(dayToBuild,
-                            weekendDays: widget.weekendDays)) {
-                          mainDayColor = widget.holidayColor ??
-                              Theme.of(context).colorScheme.secondary;
-                        } else if (Utils.holidays(
-                            dayToBuild, widget.holidays)) {
-                          mainDayColor = widget.holidayColor ??
-                              Theme.of(context).colorScheme.secondary;
-                        } else {
-                          mainDayColor =
+          const SizedBox(height: 5.0),
+          if (_displayType == DatePickerMode.day)
+            Table(
+              children: <TableRow>[
+                TableRow(
+                  children: weeks
+                      .map(
+                        (day) => Center(
+                          child: Text(
+                            day,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    color: widget.weekColor ??
+                                        Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.color),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
+            ),
+          const SizedBox(height: 5.0),
+          _displayType == DatePickerMode.day
+              ? Expanded(
+                  key: widget.key,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: DateUtils.monthDelta(
+                            widget.firstDate, widget.lastDate) +
+                        1,
+                    onPageChanged: _handleMonthPageChanged,
+                    itemBuilder: (context, index) {
+                      return GridView.builder(
+                        key: widget.key,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _daysInMonth.length,
+                        padding: EdgeInsets.zero,
+                        gridDelegate: _daysInMonth.length == 35
+                            ? SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: weeks.length,
+                                mainAxisExtent: 60)
+                            : SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: weeks.length,
+                                mainAxisExtent: 50),
+                        itemBuilder: (context, dayIndex) {
+                          DateTime dayToBuild = _daysInMonth[dayIndex];
+                          Color? mainDayColor;
+                          Color? secondaryDayColor =
                               Theme.of(context).textTheme.bodyMedium?.color;
-                        }
+                          BoxDecoration decoration = const BoxDecoration();
 
-                        return GestureDetector(
-                          onTap: () {
-                            if (Utils.isSameMonth(widget.calendarType,
-                                _focusedDate, dayToBuild)) {
-                              _handleDateSelected(dayToBuild);
-                            }
-                          },
-                          child: Container(
-                            decoration: decoration,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 3.0,
-                              vertical: 2.0,
-                            ),
-                            child: Stack(
-                              children: [
-                                widget.dayBuilder == null
-                                    ? DayBuilder(
-                                        dayToBuild: dayToBuild,
-                                        calendarType: widget.calendarType,
-                                        dayColor: mainDayColor,
-                                        secondaryDayColor: secondaryDayColor,
-                                      )
-                                    : widget.dayBuilder!(dayToBuild),
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Visibility(
-                                    visible: _checkEventOnDate(dayToBuild),
-                                    child: Container(
-                                      width: 5.0,
-                                      height: 5.0,
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 10.0,
-                                        vertical: 10.0,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: widget.eventColor ??
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(1000.0),
+                          if (Utils.isSameDay(dayToBuild, _selectedDate) &&
+                              Utils.isSameMonth(widget.calendarType,
+                                  _focusedDate, dayToBuild)) {
+                            mainDayColor = Colors.white;
+                            decoration = widget.selectedDayDecoration ??
+                                BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  border: Border.all(
+                                    color: Theme.of(context).dividerColor,
+                                  ),
+                                  shape: BoxShape.circle,
+                                );
+                          } else if (Utils.isToday(dayToBuild)) {
+                            mainDayColor = Theme.of(context).primaryColorDark;
+                            decoration = widget.todayDecoration ??
+                                BoxDecoration(
+                                  color: Theme.of(context).primaryColorLight,
+                                  shape: BoxShape.circle,
+                                );
+                          } else if (!Utils.isSameMonth(
+                              widget.calendarType, _focusedDate, dayToBuild)) {
+                            mainDayColor = Colors.grey.withOpacity(0.5);
+                            secondaryDayColor = Colors.grey.withOpacity(0.5);
+                          } else if (Utils.isWeekend(dayToBuild,
+                              weekendDays: widget.weekendDays)) {
+                            mainDayColor = widget.holidayColor ??
+                                Theme.of(context).colorScheme.secondary;
+                          } else if (Utils.holidays(
+                              dayToBuild, widget.holidays)) {
+                            mainDayColor = widget.holidayColor ??
+                                Theme.of(context).colorScheme.secondary;
+                          } else {
+                            mainDayColor =
+                                Theme.of(context).textTheme.bodyMedium?.color;
+                          }
+
+                          return GestureDetector(
+                            onTap: () {
+                              if (Utils.isSameMonth(widget.calendarType,
+                                  _focusedDate, dayToBuild)) {
+                                _handleDateSelected(dayToBuild);
+                              }
+                            },
+                            child: Container(
+                              decoration: decoration,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 3.0,
+                                vertical: 2.0,
+                              ),
+                              child: Stack(
+                                children: [
+                                  widget.dayBuilder == null
+                                      ? DayBuilder(
+                                          dayToBuild: dayToBuild,
+                                          calendarType: widget.calendarType,
+                                          dayColor: mainDayColor,
+                                          secondaryDayColor: secondaryDayColor,
+                                        )
+                                      : widget.dayBuilder!(dayToBuild),
+                                  Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: Visibility(
+                                      visible: _checkEventOnDate(dayToBuild),
+                                      child: Container(
+                                        width: 5.0,
+                                        height: 5.0,
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 10.0,
+                                          vertical: 10.0,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: widget.eventColor ??
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(1000.0),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                )
+              : Expanded(
+                  key: widget.key,
+                  child: _buildYearPicker(),
                 ),
-              )
-            : Expanded(
-                child: _buildYearPicker(),
-              ),
-      ],
+        ],
+      ),
     );
   }
 }
