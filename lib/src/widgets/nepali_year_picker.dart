@@ -95,7 +95,6 @@ class _NepaliYearPickerState extends State<NepaliYearPicker> {
       children: <Widget>[
         const Divider(),
         Expanded(
-          key: widget.key,
           child: GridView.builder(
             controller: _scrollController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

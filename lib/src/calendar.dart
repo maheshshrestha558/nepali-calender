@@ -395,7 +395,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           const SizedBox(height: 5.0),
           _displayType == DatePickerMode.day
               ? Expanded(
-                  key: widget.key,
                   child: PageView.builder(
                     controller: _pageController,
                     scrollDirection: Axis.horizontal,
@@ -514,7 +513,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                   ),
                 )
               : Expanded(
-                  key: widget.key,
                   child: _buildYearPicker(),
                 ),
         ],
