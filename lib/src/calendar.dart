@@ -563,11 +563,8 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                             width: 5.0,
                                             height: 5.0,
                                             decoration: BoxDecoration(
-                                              color: markerColor ??
-                                                  widget.eventColor ??
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary,
+                                              color: widget.eventColor ??
+                                                  markerColor,
                                               borderRadius:
                                                   BorderRadius.circular(1000.0),
                                             ),
