@@ -23,12 +23,44 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// class Event<T> {
+//   DateTime? date;
+//   DateTime? startDate;
+//   DateTime? endDate;
+//   T? event;
+//   T? color;
+
+//   Event({
+//     this.date,
+//     this.startDate,
+//     this.endDate,
+//     this.event,
+//     this.color,
+//   });
+// }
+
 class Event<T> {
-  DateTime? date;
+  bool? isHoliday;
+  T? eventType;
   T? event;
+  T? color;
+  T? description;
+  T? eventFor;
+  DateTime? startDate;
+  DateTime? endDate;
+  T? eventVenue;
+  DateTime? date;
 
   Event({
-    this.date,
+    this.isHoliday,
+    this.eventType,
     this.event,
+    this.color,
+    this.description,
+    this.eventFor,
+    this.startDate,
+    this.endDate,
+    this.eventVenue,
+    this.date,
   });
 }
