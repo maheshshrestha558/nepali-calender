@@ -249,7 +249,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
         ?.where((item) => item.date?.difference(currentDate).inDays == 0)
         .toList();
     _selectedDate = currentDate;
-    widget.onDateSelected.call(date, todaysEvents);
+    widget.onDateSelected.call(
+      date,
+      todaysEvents,
+    );
     setState(() {});
   }
 
@@ -295,6 +298,36 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           onChanged: (date) => _handleYearChanged(date.toDateTime()),
         );
     }
+  }
+
+  Color? _getEventColor(DateTime date) {
+    // Check if there are events on the specific date
+    List<Event>? eventsForDay = widget.events?.where((event) {
+      return event.date?.difference(date).inDays == 0;
+    }).toList();
+
+    if (eventsForDay != null && eventsForDay.isNotEmpty) {
+      // Return the color for the first event or implement logic for multiple events
+      return eventsForDay
+          .first.color; // Assuming each Event has a color property
+    }
+    return null; // No events, no marker color
+  }
+
+  List<dynamic> _getEvenstColors(DateTime date) {
+    // Get the list of events for the specific date
+    List<Event>? eventsForDay = widget.events?.where((event) {
+      return event.date?.difference(date).inDays == 0;
+    }).toList();
+
+    // Return the list of colors for all events on the given day
+    if (eventsForDay != null && eventsForDay.isNotEmpty) {
+      return eventsForDay
+          .map(
+              (event) => event.color ?? Theme.of(context).colorScheme.secondary)
+          .toList();
+    }
+    return []; // No events, no colors
   }
 
   @override
@@ -456,6 +489,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                             mainDayColor =
                                 Theme.of(context).textTheme.bodyMedium?.color;
                           }
+                          // final eventMarkerColor = _getEventColor(dayToBuild);
+                          final eventColors = _getEvenstColors(dayToBuild);
+                          final limitedEventColors =
+                              eventColors.take(4).toList();
 
                           return GestureDetector(
                             onTap: () {
@@ -480,29 +517,64 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                           secondaryDayColor: secondaryDayColor,
                                         )
                                       : widget.dayBuilder!(dayToBuild),
-                                  Align(
-                                    alignment: Alignment.bottomLeft,
-                                    child: Visibility(
-                                      visible: _checkEventOnDate(dayToBuild),
-                                      child: Container(
-                                        width: 5.0,
-                                        height: 5.0,
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 10.0,
-                                          vertical: 10.0,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: widget.eventColor ??
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(1000.0),
+                                  // Align(
+                                  //   alignment: Alignment.bottomLeft,
+                                  //   child: Visibility(
+                                  //     visible: _checkEventOnDate(dayToBuild),
+                                  //     child: Container(
+                                  //       width: 5.0,
+                                  //       height: 5.0,
+                                  //       margin: const EdgeInsets.symmetric(
+                                  //         horizontal: 10.0,
+                                  //         vertical: 10.0,
+                                  //       ),
+                                  //       decoration: BoxDecoration(
+                                  //         color: eventMarkerColor ??
+                                  //             widget.eventColor ??
+                                  //             Theme.of(context)
+                                  //                 .colorScheme
+                                  //                 .secondary,
+                                  //         borderRadius: const BorderRadius.all(
+                                  //           Radius.circular(1000.0),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  // Display multiple event markers if events exist
+                                  if (eventColors.isNotEmpty)
+                                    ...limitedEventColors
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      int index = entry.key;
+                                      Color markerColor = entry.value;
+
+                                      // You can adjust the positioning of each marker here
+                                      return Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10.0,
+                                              bottom: 10.0 +
+                                                  (index *
+                                                      6)), // Adjust vertical spacing for multiple markers
+                                          child: Container(
+                                            width: 5.0,
+                                            height: 5.0,
+                                            decoration: BoxDecoration(
+                                              color: markerColor ??
+                                                  widget.eventColor ??
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                              borderRadius:
+                                                  BorderRadius.circular(1000.0),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
+                                      );
+                                    }).toList(),
                                 ],
                               ),
                             ),

@@ -33,45 +33,25 @@ class _EventCalendarState extends State<EventCalendar> {
   List<Event> _getEvents() {
     return [
       Event(
-        date: DateTime(2023, 04, 14),
-        event: Content(title: 'Event'),
-      ),
+          date: DateTime(2024, 12, 26),
+          event: 'Labour Day',
+          color: Colors.blue),
       Event(
-        date: DateTime(2023, 04, 16),
-        event: Content(title: 'Event 01'),
-      ),
+          date: DateTime(2024, 12, 26),
+          event: 'Mother\'s Day',
+          color: Colors.green),
       Event(
-        date: DateTime(2023, 05, 01),
-        event: Content(title: 'Event 02'),
-      ),
+          date: DateTime(2024, 12, 26),
+          event: 'Public Holiday',
+          color: Colors.red),
       Event(
-        date: DateTime(2023, 05, 14),
-        event: Content(title: 'Event 03'),
-      ),
+          date: DateTime(2024, 12, 26),
+          event: 'Special Event',
+          color: Colors.orange),
       Event(
-        date: DateTime(2023, 05, 26),
-        event: Content(title: 'Event 04'),
-      ),
-      Event(
-        date: DateTime(2023, 05, 29),
-        event: Content(title: 'Event 05'),
-      ),
-      Event(
-        date: DateTime(2023, 07, 21),
-        event: Content(title: 'Event 06'),
-      ),
-      Event(
-        date: DateTime(2023, 08, 22),
-        event: Content(title: 'Event 07'),
-      ),
-      Event(
-        date: DateTime(2023, 08, 23),
-        event: Content(title: 'Event 08'),
-      ),
-      Event(
-        date: DateTime(2023, 08, 30),
-        event: Content(title: 'Event 09'),
-      ),
+          date: DateTime(2024, 12, 26),
+          event: 'Summer Festival',
+          color: Colors.purple),
     ];
   }
 
@@ -99,7 +79,6 @@ class _EventCalendarState extends State<EventCalendar> {
         firstDate: DateTime(1970),
         lastDate: DateTime(2100),
         mondayWeek: false, // true is for Monday, false is  for Sunday
-        eventColor: Colors.purpleAccent,
         weekendDays: const [
           DateTime.saturday,
         ],
