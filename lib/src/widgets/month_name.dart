@@ -57,7 +57,6 @@ class MonthName extends StatelessWidget {
       height: headerheight ?? 40.0,
       child: calendarType == CalendarType.bs
           ? Column(
-              key: key,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -72,7 +71,6 @@ class MonthName extends StatelessWidget {
               ],
             )
           : Column(
-              key: key,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(

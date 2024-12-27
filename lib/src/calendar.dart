@@ -63,6 +63,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Week name color
   final Color? weekColor;
+  final double? calenderheight;
 
   /// Holiday calendar theme color
   final Color? holidayColor;
@@ -92,6 +93,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     required this.initialDate,
     required this.firstDate,
     required this.lastDate,
+    this.calenderheight,
     this.holidays,
     this.mondayWeek = false,
     this.weekendDays = const [DateTime.saturday],
@@ -311,8 +313,8 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           ? Utils.nepaliWeek
           : Utils.englishWeek;
     }
-    return Expanded(
-      key: widget.key,
+    return SizedBox(
+      height: widget.calenderheight ?? 400,
       child: Column(
         children: [
           Padding(
