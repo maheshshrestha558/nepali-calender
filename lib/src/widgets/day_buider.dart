@@ -45,10 +45,8 @@ class DayBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      key: key,
       children: [
         Container(
-          key: key,
           alignment: Alignment.center,
           child: Text(
             calendarType == CalendarType.bs
@@ -62,11 +60,9 @@ class DayBuilder extends StatelessWidget {
           ),
         ),
         Positioned(
-          key: key,
           right: 5.0,
           bottom: 3.0,
           child: Text(
-            key: key,
             calendarType == CalendarType.bs
                 ? '${dayToBuild.day}'
                 : NepaliDateFormat.d().format(dayToBuild.toNepaliDateTime()),

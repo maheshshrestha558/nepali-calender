@@ -276,7 +276,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     switch (widget.calendarType) {
       case CalendarType.ad:
         return YearPicker(
-          key: widget.key,
           currentDate: _selectedDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
@@ -315,7 +314,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     return Expanded(
       key: widget.key,
       child: Column(
-        key: widget.key,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -405,7 +403,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                     onPageChanged: _handleMonthPageChanged,
                     itemBuilder: (context, index) {
                       return GridView.builder(
-                        key: widget.key,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: _daysInMonth.length,
                         padding: EdgeInsets.zero,
