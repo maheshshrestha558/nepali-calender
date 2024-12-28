@@ -41,6 +41,7 @@
 
 class Event<T> {
   bool? isHoliday;
+  T? id;
   T? eventType;
   T? event;
   T? color;
@@ -52,6 +53,7 @@ class Event<T> {
   DateTime? date;
 
   Event({
+    this.id,
     this.isHoliday,
     this.eventType,
     this.event,

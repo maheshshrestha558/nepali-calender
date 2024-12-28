@@ -51,7 +51,28 @@ class _EventCalendarState extends State<EventCalendar> {
         startDate: DateTime(2024, 12, 24),
         endDate: DateTime(2024, 12, 28),
         event: 'Summer Festival',
-        color: Colors.purple,
+        color: Colors.green,
+      ),
+      Event(
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 24),
+        endDate: DateTime(2024, 12, 28),
+        event: 'Summer Festival',
+        color: Colors.black26,
+      ),
+      Event(
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 24),
+        endDate: DateTime(2024, 12, 28),
+        event: 'Summer Festival',
+        color: Colors.lightGreenAccent,
+      ),
+      Event(
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 24),
+        endDate: DateTime(2024, 12, 28),
+        event: 'Summer Festival',
+        color: Colors.deepPurpleAccent,
       ),
     ];
   }
@@ -79,7 +100,6 @@ class _EventCalendarState extends State<EventCalendar> {
         initialDate: DateTime.now(),
         firstDate: DateTime(1970),
         lastDate: DateTime(2100),
-        mondayWeek: false, // true is for Monday, false is  for Sunday
         weekendDays: const [
           DateTime.saturday,
         ],
