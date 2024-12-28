@@ -33,37 +33,23 @@ class _EventCalendarState extends State<EventCalendar> {
   List<Event> _getEvents() {
     return [
       Event(
-        date: DateTime(2024, 12, 26),
-        startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 26),
+        date: DateTime(2024, 12, 15),
+        startDate: DateTime(2024, 12, 15),
+        endDate: DateTime(2024, 12, 22),
         event: 'Public Holiday',
         color: Colors.red,
       ),
       Event(
         date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 26),
+        endDate: DateTime(2024, 12, 25),
         event: 'Special Event',
         color: Colors.orange,
       ),
       Event(
         date: DateTime(2024, 12, 26),
-        startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 26),
-        event: 'Summer Festival',
-        color: Colors.purple,
-      ),
-      Event(
-        date: DateTime(2024, 12, 26),
-        startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 26),
-        event: 'Summer Festival',
-        color: Colors.purple,
-      ),
-      Event(
-        date: DateTime(2024, 12, 26),
-        startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 24),
+        endDate: DateTime(2024, 12, 28),
         event: 'Summer Festival',
         color: Colors.purple,
       ),

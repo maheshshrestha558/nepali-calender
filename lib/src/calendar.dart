@@ -489,7 +489,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                             mainDayColor =
                                 Theme.of(context).textTheme.bodyMedium?.color;
                           }
-                          // final eventMarkerColor = _getEventColor(dayToBuild);
+                          final eventMarkerColor = _getEventColor(dayToBuild);
                           final eventColors = _getEventColors(dayToBuild);
                           final limitedEventColors =
                               eventColors.take(4).toList();
@@ -517,32 +517,30 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                           secondaryDayColor: secondaryDayColor,
                                         )
                                       : widget.dayBuilder!(dayToBuild),
-                                  // Align(
-                                  //   alignment: Alignment.bottomLeft,
-                                  //   child: Visibility(
-                                  //     visible: _checkEventOnDate(dayToBuild),
-                                  //     child: Container(
-                                  //       width: 5.0,
-                                  //       height: 5.0,
-                                  //       margin: const EdgeInsets.symmetric(
-                                  //         horizontal: 10.0,
-                                  //         vertical: 10.0,
-                                  //       ),
-                                  //       decoration: BoxDecoration(
-                                  //         color: eventMarkerColor ??
-                                  //             widget.eventColor ??
-                                  //             Theme.of(context)
-                                  //                 .colorScheme
-                                  //                 .secondary,
-                                  //         borderRadius: const BorderRadius.all(
-                                  //           Radius.circular(1000.0),
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
+                                  if (eventMarkerColor != null)
+                                    Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Visibility(
+                                        visible: _checkEventOnDate(dayToBuild),
+                                        child: Container(
+                                          width: 5.0,
+                                          height: 5.0,
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 10.0,
+                                            vertical: 10.0,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: widget.eventColor ??
+                                                eventMarkerColor,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(1000.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   // Display multiple event markers if events exist
-
                                   if (eventColors.isNotEmpty)
                                     ...limitedEventColors
                                         .asMap()
