@@ -19,8 +19,8 @@ class EventCalendar extends StatefulWidget {
 class _EventCalendarState extends State<EventCalendar> {
   late CalendarType _calendarType;
   late List<Event> _events;
-  DateTime? _selectedDate;
-  List<Event>? _selectedDateEvents;
+  DateTime? selectedDate;
+  List<Event>? selectedDateEvents;
 
   @override
   void initState() {
@@ -33,25 +33,40 @@ class _EventCalendarState extends State<EventCalendar> {
   List<Event> _getEvents() {
     return [
       Event(
-          date: DateTime(2024, 12, 26),
-          event: 'Labour Day',
-          color: Colors.blue),
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 20),
+        endDate: DateTime(2024, 12, 26),
+        event: 'Public Holiday',
+        color: Colors.red,
+      ),
       Event(
-          date: DateTime(2024, 12, 26),
-          event: 'Mother\'s Day',
-          color: Colors.green),
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 20),
+        endDate: DateTime(2024, 12, 26),
+        event: 'Special Event',
+        color: Colors.orange,
+      ),
       Event(
-          date: DateTime(2024, 12, 26),
-          event: 'Public Holiday',
-          color: Colors.red),
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 20),
+        endDate: DateTime(2024, 12, 26),
+        event: 'Summer Festival',
+        color: Colors.purple,
+      ),
       Event(
-          date: DateTime(2024, 12, 26),
-          event: 'Special Event',
-          color: Colors.orange),
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 20),
+        endDate: DateTime(2024, 12, 26),
+        event: 'Summer Festival',
+        color: Colors.purple,
+      ),
       Event(
-          date: DateTime(2024, 12, 26),
-          event: 'Summer Festival',
-          color: Colors.purple),
+        date: DateTime(2024, 12, 26),
+        startDate: DateTime(2024, 12, 20),
+        endDate: DateTime(2024, 12, 26),
+        event: 'Summer Festival',
+        color: Colors.purple,
+      ),
     ];
   }
 
@@ -85,14 +100,14 @@ class _EventCalendarState extends State<EventCalendar> {
         events: _events,
         onMonthChanged: (date, events) {
           setState(() {
-            _selectedDate = date;
-            _selectedDateEvents = events;
+            selectedDate = date;
+            selectedDateEvents = events;
           });
         },
         onDateSelected: (date, events) {
           setState(() {
-            _selectedDate = date;
-            _selectedDateEvents = events;
+            selectedDate = date;
+            selectedDateEvents = events;
           });
         },
       ),

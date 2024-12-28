@@ -46,8 +46,8 @@ class Event<T> {
   T? color;
   T? description;
   T? eventFor;
-  DateTime? startDate;
-  DateTime? endDate;
+  T? startDate;
+  T? endDate;
   T? eventVenue;
   DateTime? date;
 

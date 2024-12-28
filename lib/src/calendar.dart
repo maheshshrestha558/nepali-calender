@@ -314,20 +314,20 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     return null; // No events, no marker color
   }
 
-  List<dynamic> _getEvenstColors(DateTime date) {
-    // Get the list of events for the specific date
-    List<Event>? eventsForDay = widget.events?.where((event) {
-      return event.date?.difference(date).inDays == 0;
-    }).toList();
+  List<Color> _getEventColors(DateTime day) {
+    List<Color> eventColors = [];
 
-    // Return the list of colors for all events on the given day
-    if (eventsForDay != null && eventsForDay.isNotEmpty) {
-      return eventsForDay
-          .map(
-              (event) => event.color ?? Theme.of(context).colorScheme.secondary)
-          .toList();
+    // Check if events is not null before iterating
+    if (widget.events != null) {
+      for (var event in widget.events!) {
+        if (day.isAfter(event.startDate.subtract(const Duration(days: 1))) &&
+            day.isBefore(event.endDate.add(const Duration(days: 1)))) {
+          eventColors.add(event.color);
+        }
+      }
     }
-    return []; // No events, no colors
+
+    return eventColors;
   }
 
   @override
@@ -490,7 +490,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                 Theme.of(context).textTheme.bodyMedium?.color;
                           }
                           // final eventMarkerColor = _getEventColor(dayToBuild);
-                          final eventColors = _getEvenstColors(dayToBuild);
+                          final eventColors = _getEventColors(dayToBuild);
                           final limitedEventColors =
                               eventColors.take(4).toList();
 
@@ -542,6 +542,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                   //   ),
                                   // ),
                                   // Display multiple event markers if events exist
+
                                   if (eventColors.isNotEmpty)
                                     ...limitedEventColors
                                         .asMap()
@@ -550,15 +551,12 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                       int index = entry.key;
                                       Color markerColor = entry.value;
 
-                                      // You can adjust the positioning of each marker here
                                       return Align(
                                         alignment: Alignment.bottomLeft,
                                         child: Padding(
                                           padding: EdgeInsets.only(
                                               left: 10.0,
-                                              bottom: 10.0 +
-                                                  (index *
-                                                      6)), // Adjust vertical spacing for multiple markers
+                                              bottom: 10.0 + (index * 6)),
                                           child: Container(
                                             width: 5.0,
                                             height: 5.0,
