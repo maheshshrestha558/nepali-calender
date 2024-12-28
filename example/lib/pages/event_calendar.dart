@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
-class Content {
-  String? title;
-
-  Content({
-    this.title,
-  });
-}
-
 class EventCalendar extends StatefulWidget {
   const EventCalendar({Key? key}) : super(key: key);
 
@@ -33,45 +25,39 @@ class _EventCalendarState extends State<EventCalendar> {
   List<Event> _getEvents() {
     return [
       Event(
-        date: DateTime(2024, 12, 15),
         startDate: DateTime(2024, 12, 15),
         endDate: DateTime(2024, 12, 22),
         event: 'Public Holiday',
         color: Colors.red,
       ),
       Event(
-        date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 20),
         endDate: DateTime(2024, 12, 25),
         event: 'Special Event',
         color: Colors.orange,
       ),
       Event(
-        date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 24),
         endDate: DateTime(2024, 12, 28),
-        event: 'Summer Festival',
+        event: 'Summer ',
         color: Colors.green,
       ),
       Event(
-        date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 24),
         endDate: DateTime(2024, 12, 28),
-        event: 'Summer Festival',
+        event: ' Festival',
         color: Colors.black26,
       ),
       Event(
-        date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 24),
         endDate: DateTime(2024, 12, 28),
-        event: 'Summer Festival',
+        event: 'mkmknkkmknkFestival',
         color: Colors.lightGreenAccent,
       ),
       Event(
-        date: DateTime(2024, 12, 26),
         startDate: DateTime(2024, 12, 24),
         endDate: DateTime(2024, 12, 28),
-        event: 'Summer Festival',
+        event: 'kmkkjbjnkkjbjjk',
         color: Colors.deepPurpleAccent,
       ),
     ];

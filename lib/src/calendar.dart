@@ -229,9 +229,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
   void _handleMonthChanged(DateTime currentDate) {
     if (_focusedDate.year != currentDate.year ||
         _focusedDate.month != currentDate.month) {
-      var date = widget.calendarType == CalendarType.ad
-          ? currentDate
-          : currentDate.toNepaliDateTime();
+      // var date = widget.calendarType == CalendarType.ad
+      //     ? currentDate
+      //     : currentDate.toNepaliDateTime();
+      var date = currentDate;
       List<Event>? monthsEvents = widget.events
           ?.where((item) => item.date?.month == currentDate.month)
           .toList();
@@ -241,9 +242,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   // on date selected
   void _handleDateSelected(DateTime currentDate) {
-    var date = widget.calendarType == CalendarType.ad
-        ? currentDate
-        : currentDate.toNepaliDateTime();
+    // var date = widget.calendarType == CalendarType.ad
+    //     ? currentDate
+    //     : currentDate.toNepaliDateTime();
+    var date = currentDate;
 
     List<Event>? todaysEvents = widget.events
         ?.where((item) => item.date?.difference(currentDate).inDays == 0)
@@ -316,12 +318,9 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   List<Color> _getEventColors(DateTime day) {
     List<Color> eventColors = [];
-
-    // Check if events is not null before iterating
     if (widget.events != null) {
       for (var event in widget.events!) {
-        if (day.isAfter(event.startDate.subtract(const Duration(days: 1))) &&
-            day.isBefore(event.endDate.add(const Duration(days: 1)))) {
+        if (day.isAfter(event.startDate) && day.isBefore(event.endDate)) {
           eventColors.add(event.color);
         }
       }
