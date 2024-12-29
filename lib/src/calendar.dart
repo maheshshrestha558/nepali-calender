@@ -43,6 +43,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// The latest date the user is permitted to pick [firstDate].
   final DateTime lastDate;
+  final bool handledate;
 
   /// The List of holiday dates.
   final List<DateTime>? holidays;
@@ -95,6 +96,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     required this.lastDate,
     this.calenderheight,
     this.holidays,
+    this.handledate = false,
     this.mondayWeek = false,
     this.weekendDays = const [DateTime.saturday],
     this.events,
@@ -227,35 +229,61 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   // on month changed
   void _handleMonthChanged(DateTime currentDate) {
-    if (_focusedDate.year != currentDate.year ||
-        _focusedDate.month != currentDate.month) {
-      // var date = widget.calendarType == CalendarType.ad
-      //     ? currentDate
-      //     : currentDate.toNepaliDateTime();
-      var date = currentDate;
-      List<Event>? monthsEvents = widget.events
-          ?.where((item) => item.date?.month == currentDate.month)
-          .toList();
-      widget.onMonthChanged?.call(date, monthsEvents);
+    if (widget.handledate == true) {
+      if (_focusedDate.year != currentDate.year ||
+          _focusedDate.month != currentDate.month) {
+        var date = widget.calendarType == CalendarType.ad
+            ? currentDate
+            : currentDate.toNepaliDateTime();
+        List<Event>? monthsEvents = widget.events
+            ?.where((item) => item.date?.month == currentDate.month)
+            .toList();
+        widget.onMonthChanged?.call(date, monthsEvents);
+      }
+    } else {
+      if (_focusedDate.year != currentDate.year ||
+          _focusedDate.month != currentDate.month) {
+        // var date = widget.calendarType == CalendarType.ad
+        //     ? currentDate
+        //     : currentDate.toNepaliDateTime();
+        var date = currentDate;
+        List<Event>? monthsEvents = widget.events
+            ?.where((item) => item.date?.month == currentDate.month)
+            .toList();
+        widget.onMonthChanged?.call(date, monthsEvents);
+      }
     }
   }
 
   // on date selected
   void _handleDateSelected(DateTime currentDate) {
-    // var date = widget.calendarType == CalendarType.ad
-    //     ? currentDate
-    //     : currentDate.toNepaliDateTime();
-    var date = currentDate;
+    if (widget.handledate == true) {
+      var date = widget.calendarType == CalendarType.ad
+          ? currentDate
+          : currentDate.toNepaliDateTime();
 
-    List<Event>? todaysEvents = widget.events
-        ?.where((item) => item.date?.difference(currentDate).inDays == 0)
-        .toList();
-    _selectedDate = currentDate;
-    widget.onDateSelected.call(
-      date,
-      todaysEvents,
-    );
-    setState(() {});
+      List<Event>? todaysEvents = widget.events
+          ?.where((item) => item.date?.difference(currentDate).inDays == 0)
+          .toList();
+      _selectedDate = currentDate;
+      widget.onDateSelected.call(
+        date,
+        todaysEvents,
+      );
+      setState(() {});
+    } else {
+      var date = currentDate;
+
+      List<Event>? todaysEvents = widget.events
+          ?.where((item) => item.date?.difference(currentDate).inDays == 0)
+          .toList();
+      _selectedDate = currentDate;
+      widget.onDateSelected.call(
+        date,
+        todaysEvents,
+      );
+      setState(() {});
+    }
   }
 
   // check if event exist in the selected date

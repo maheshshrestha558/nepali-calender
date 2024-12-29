@@ -17,7 +17,6 @@ class _EventCalendarState extends State<EventCalendar> {
   @override
   void initState() {
     super.initState();
-
     _calendarType = CalendarType.bs;
     _events = _getEvents();
   }
@@ -31,36 +30,21 @@ class _EventCalendarState extends State<EventCalendar> {
         color: Colors.red,
       ),
       Event(
-        startDate: DateTime(2024, 12, 20),
-        endDate: DateTime(2024, 12, 25),
+        startDate: DateTime(2024, 12, 25),
+        endDate: DateTime(2024, 12, 30),
         event: 'Special Event',
         color: Colors.orange,
       ),
-      Event(
-        startDate: DateTime(2024, 12, 24),
-        endDate: DateTime(2024, 12, 28),
-        event: 'Summer ',
-        color: Colors.green,
-      ),
-      Event(
-        startDate: DateTime(2024, 12, 24),
-        endDate: DateTime(2024, 12, 28),
-        event: ' Festival',
-        color: Colors.black26,
-      ),
-      Event(
-        startDate: DateTime(2024, 12, 24),
-        endDate: DateTime(2024, 12, 28),
-        event: 'mkmknkkmknkFestival',
-        color: Colors.lightGreenAccent,
-      ),
-      Event(
-        startDate: DateTime(2024, 12, 24),
-        endDate: DateTime(2024, 12, 28),
-        event: 'kmkkjbjnkkjbjjk',
-        color: Colors.deepPurpleAccent,
-      ),
+      // Add more events here
     ];
+  }
+
+  List<Event> _filterEventsByMonthDay(DateTime date) {
+    // Matches events based on month and day
+    return _events.where((event) {
+      return event.startDate.month == date.month &&
+          event.startDate.day == date.day;
+    }).toList();
   }
 
   @override
@@ -71,11 +55,11 @@ class _EventCalendarState extends State<EventCalendar> {
         actions: [
           ElevatedButton(
             onPressed: () {
-              if (_calendarType == CalendarType.ad) {
-                setState(() => _calendarType = CalendarType.bs);
-              } else {
-                setState(() => _calendarType = CalendarType.ad);
-              }
+              setState(() {
+                _calendarType = _calendarType == CalendarType.ad
+                    ? CalendarType.bs
+                    : CalendarType.ad;
+              });
             },
             child: Text(_calendarType == CalendarType.bs ? 'En' : 'ने'),
           ),
@@ -86,6 +70,7 @@ class _EventCalendarState extends State<EventCalendar> {
         initialDate: DateTime.now(),
         firstDate: DateTime(1970),
         lastDate: DateTime(2100),
+        handledate: true,
         weekendDays: const [
           DateTime.saturday,
         ],
@@ -93,13 +78,13 @@ class _EventCalendarState extends State<EventCalendar> {
         onMonthChanged: (date, events) {
           setState(() {
             selectedDate = date;
-            selectedDateEvents = events;
+            selectedDateEvents = _filterEventsByMonthDay(date);
           });
         },
         onDateSelected: (date, events) {
           setState(() {
             selectedDate = date;
-            selectedDateEvents = events;
+            selectedDateEvents = _filterEventsByMonthDay(date);
           });
         },
       ),
