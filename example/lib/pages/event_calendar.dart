@@ -78,7 +78,7 @@ class _EventCalendarState extends State<EventCalendar> {
             weekendDays: const [
               DateTime.saturday,
             ],
-            markerbool: true,
+            markerbool: false,
             events: _events,
             onMonthChanged: (date, events) {
               setState(() {
