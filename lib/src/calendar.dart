@@ -43,7 +43,8 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// The latest date the user is permitted to pick [firstDate].
   final DateTime lastDate;
-  final bool handledate;
+
+  final bool? handledate;
 
   /// The List of holiday dates.
   final List<DateTime>? holidays;
@@ -53,6 +54,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Weather Start of the week is [Sunday] or [Monday].
   final bool mondayWeek;
+
   final BuildContext? context;
 
   /// List of days in week to be considered as weekend.
@@ -80,9 +82,11 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Builds the widget for particular day.
   final Widget Function(DateTime)? dayBuilder;
+  final bool? markerbool;
 
   /// Called when the user picks a day.
   final OnSelectedDate onDateSelected;
+
   final double? headerheight;
 
   /// Called when the user changes month.
@@ -96,7 +100,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     required this.lastDate,
     this.calenderheight,
     this.holidays,
-    this.handledate = false,
+    this.handledate,
     this.mondayWeek = false,
     this.weekendDays = const [DateTime.saturday],
     this.events,
@@ -108,6 +112,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.selectedDayDecoration,
     this.dayBuilder,
     this.headerheight,
+    this.markerbool,
     required this.onDateSelected,
     this.onMonthChanged,
   }) : super(key: key);
@@ -348,7 +353,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     List<Color> eventColors = [];
     if (widget.events != null) {
       for (var event in widget.events!) {
-        if (day.isAfter(event.startDate) && day.isBefore(event.endDate)) {
+        if (day.isAfter(event.startDate!) && day.isBefore(event.endDate!)) {
           eventColors.add(event.color);
         }
       }
@@ -549,22 +554,33 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                                       alignment: Alignment.bottomLeft,
                                       child: Visibility(
                                         visible: _checkEventOnDate(dayToBuild),
-                                        child: Container(
-                                          width: 5.0,
-                                          height: 5.0,
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 10.0,
-                                            vertical: 10.0,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: widget.eventColor ??
-                                                eventMarkerColor,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(1000.0),
-                                            ),
-                                          ),
-                                        ),
+                                        child: widget.markerbool == true
+                                            ? Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10.0,
+                                                    bottom: 10.0 + (index * 6)),
+                                                child: Container(
+                                                  width: 5.0,
+                                                  height: 5.0,
+                                                  decoration: BoxDecoration(
+                                                    color: widget.eventColor ??
+                                                        eventMarkerColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1000.0),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: 50.0,
+                                                height: 55.0,
+                                                decoration: BoxDecoration(
+                                                  color: widget.eventColor ??
+                                                      eventMarkerColor,
+                                                  // borderRadius:
+                                                  //     BorderRadius.circular(1000.0),
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   // Display multiple event markers if events exist
@@ -578,21 +594,33 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
                                       return Align(
                                         alignment: Alignment.bottomLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 10.0,
-                                              bottom: 10.0 + (index * 6)),
-                                          child: Container(
-                                            width: 5.0,
-                                            height: 5.0,
-                                            decoration: BoxDecoration(
-                                              color: widget.eventColor ??
-                                                  markerColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(1000.0),
-                                            ),
-                                          ),
-                                        ),
+                                        child: widget.markerbool == true
+                                            ? Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10.0,
+                                                    bottom: 10.0 + (index * 6)),
+                                                child: Container(
+                                                  width: 5.0,
+                                                  height: 5.0,
+                                                  decoration: BoxDecoration(
+                                                    color: widget.eventColor ??
+                                                        markerColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            1000.0),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: 50.0,
+                                                height: 55.0,
+                                                decoration: BoxDecoration(
+                                                  color: widget.eventColor ??
+                                                      markerColor,
+                                                  // borderRadius:
+                                                  //     BorderRadius.circular(1000.0),
+                                                ),
+                                              ),
                                       );
                                     }).toList(),
                                 ],

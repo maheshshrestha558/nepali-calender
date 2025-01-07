@@ -1,4 +1,5 @@
 import 'package:calendar_example/pages/dynamic_calendar.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
@@ -7,7 +8,17 @@ import 'pages/event_calendar.dart';
 import 'pages/feature_calendar.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    DevicePreview(
+      enabled: true,
+      tools: const [
+        ...DevicePreview.defaultTools,
+      ],
+      builder: (context) => const MyApp(),
+    ),
+
+    // const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {

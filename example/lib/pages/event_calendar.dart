@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
@@ -27,13 +29,13 @@ class _EventCalendarState extends State<EventCalendar> {
         startDate: DateTime(2024, 12, 15),
         endDate: DateTime(2024, 12, 22),
         event: 'Public Holiday',
-        color: Colors.red,
+        color: Colors.red.withOpacity(0.1),
       ),
       Event(
-        startDate: DateTime(2024, 12, 25),
+        startDate: DateTime(2024, 12, 18),
         endDate: DateTime(2024, 12, 30),
         event: 'Special Event',
-        color: Colors.orange,
+        color: Colors.orange.withOpacity(0.1),
       ),
       // Add more events here
     ];
@@ -42,8 +44,8 @@ class _EventCalendarState extends State<EventCalendar> {
   List<Event> _filterEventsByMonthDay(DateTime date) {
     // Matches events based on month and day
     return _events.where((event) {
-      return event.startDate.month == date.month &&
-          event.startDate.day == date.day;
+      return event.startDate!.month == date.month &&
+          event.startDate!.day == date.day;
     }).toList();
   }
 
@@ -65,28 +67,46 @@ class _EventCalendarState extends State<EventCalendar> {
           ),
         ],
       ),
-      body: FlutterBSADCalendar(
-        calendarType: _calendarType,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1970),
-        lastDate: DateTime(2100),
-        handledate: true,
-        weekendDays: const [
-          DateTime.saturday,
+      body: Column(
+        children: [
+          FlutterBSADCalendar(
+            calendarType: _calendarType,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1970),
+            lastDate: DateTime(2100),
+            handledate: false,
+            weekendDays: const [
+              DateTime.saturday,
+            ],
+            markerbool: true,
+            events: _events,
+            onMonthChanged: (date, events) {
+              setState(() {
+                selectedDate = date;
+                selectedDateEvents = _filterEventsByMonthDay(date);
+                log("$selectedDateEvents");
+              });
+            },
+            onDateSelected: (date, events) {
+              setState(() {
+                selectedDate = date;
+                selectedDateEvents = _filterEventsByMonthDay(date);
+              });
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+                itemCount:
+                    selectedDateEvents != null ? selectedDateEvents!.length : 0,
+                itemBuilder: (context, index) {
+                  var data = selectedDateEvents![index];
+                  log("$data");
+                  return ListTile(
+                    title: Text("${data.event}"),
+                  );
+                }),
+          )
         ],
-        events: _events,
-        onMonthChanged: (date, events) {
-          setState(() {
-            selectedDate = date;
-            selectedDateEvents = _filterEventsByMonthDay(date);
-          });
-        },
-        onDateSelected: (date, events) {
-          setState(() {
-            selectedDate = date;
-            selectedDateEvents = _filterEventsByMonthDay(date);
-          });
-        },
       ),
     );
   }
