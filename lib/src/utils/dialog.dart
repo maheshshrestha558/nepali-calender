@@ -27,7 +27,7 @@ Future<DateTime?> showFlutterBSADCalendarDialog({
     child: Container(
       key: key,
       height: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: FlutterBSADCalendar(
         initialDate: DateTime.now(),
         firstDate: DateTime(1970),
