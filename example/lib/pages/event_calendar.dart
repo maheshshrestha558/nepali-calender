@@ -35,7 +35,7 @@ class _EventCalendarState extends State<EventCalendar> {
         startDate: DateTime(2024, 12, 18),
         endDate: DateTime(2024, 12, 30),
         event: 'Special Event',
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withOpacity(0.3),
       ),
       // Add more events here
     ];

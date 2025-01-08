@@ -10,6 +10,7 @@ environment:
 dependencies:
   cupertino_icons: ^1.0.2
   device_preview: ^1.2.0
+  easy_date_timeline: ^1.1.3
   flutter:
     sdk: flutter
   flutter_bs_ad_calendar:

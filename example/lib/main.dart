@@ -1,4 +1,5 @@
 import 'package:calendar_example/pages/dynamic_calendar.dart';
+import 'package:calendar_example/pages/nepalieasydate.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
@@ -10,7 +11,7 @@ import 'pages/feature_calendar.dart';
 void main() {
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       tools: const [
         ...DevicePreview.defaultTools,
       ],
@@ -122,6 +123,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   context: context,
                   calendarType: CalendarType.ad,
                 );
+              },
+            ),
+            ElevatedButton(
+              child: const Text('NepaliDateTimeLineExample'),
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const NepaliDateTimeLineExample()));
               },
             ),
             const SizedBox(height: 30.0),
