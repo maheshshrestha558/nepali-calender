@@ -8,7 +8,7 @@ typedef OnMonthChanged<T> = Function(T selectedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
   /// The [CalendarType] displayed in the calendar.
-  final CalendarType calendarType;
+  CalendarType calendarType;
 
   /// The initially selected [DateTime] that the picker should display.
   final DateTime initialDate;
@@ -55,8 +55,13 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
   /// Decoration for selected day's cell.
   final BoxDecoration? selectedDayDecoration;
 
+  /// Function to build calendertype widget.
+  final bool nepalienglishtype;
+
   /// Builds the widget for particular day.
   final Widget Function(DateTime)? dayBuilder;
+
+  /// Decoration for marker.
   final bool? markerbool;
 
   /// Called when the user picks a day.
@@ -66,7 +71,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Called when the user changes month.
   final OnMonthChanged? onMonthChanged;
-  const FlutterBSADCalendar({
+  FlutterBSADCalendar({
     Key? key,
     this.context,
     this.calendarType = CalendarType.bs,
@@ -87,6 +92,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.selectedDayDecoration,
     this.dayBuilder,
     this.headerheight,
+    this.nepalienglishtype = false,
     this.markerbool,
     required this.onDateSelected,
     this.onMonthChanged,
@@ -122,7 +128,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       const Duration monthScrollDuration = Duration(milliseconds: 100);
       _pageController.animateToPage(
-        _currentMonthIndex,
+        DateTime.now().month,
         duration: monthScrollDuration,
         curve: Curves.easeInOut,
       );
@@ -385,6 +391,21 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                   visible: _displayType == DatePickerMode.day,
                   child: Row(
                     children: [
+                      if (widget.nepalienglishtype == true)
+                        ElevatedButton(
+                          onPressed: () {
+                            if (widget.calendarType == CalendarType.ad) {
+                              setState(
+                                  () => widget.calendarType = CalendarType.bs);
+                            } else {
+                              setState(
+                                  () => widget.calendarType = CalendarType.ad);
+                            }
+                          },
+                          child: Text(widget.calendarType == CalendarType.bs
+                              ? 'En'
+                              : 'ने'),
+                        ),
                       IconButton(
                         icon: Icon(
                           Icons.chevron_left,
