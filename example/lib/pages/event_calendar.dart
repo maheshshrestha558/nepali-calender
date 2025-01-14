@@ -11,7 +11,6 @@ class EventCalendar extends StatefulWidget {
 }
 
 class _EventCalendarState extends State<EventCalendar> {
-  late CalendarType _calendarType;
   late List<Event> _events;
   DateTime? selectedDate;
   List<Event>? selectedDateEvents;
@@ -19,7 +18,6 @@ class _EventCalendarState extends State<EventCalendar> {
   @override
   void initState() {
     super.initState();
-    _calendarType = CalendarType.bs;
     _events = _getEvents();
   }
 
@@ -54,27 +52,15 @@ class _EventCalendarState extends State<EventCalendar> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendar with Events'),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _calendarType = _calendarType == CalendarType.ad
-                    ? CalendarType.bs
-                    : CalendarType.ad;
-              });
-            },
-            child: Text(_calendarType == CalendarType.bs ? 'En' : 'ने'),
-          ),
-        ],
       ),
       body: Column(
         children: [
           FlutterBSADCalendar(
-            calendarType: _calendarType,
+            calendarType: CalendarType.bs,
             initialDate: DateTime.now(),
             firstDate: DateTime(1970),
             lastDate: DateTime(2100),
-            handledate: false,
+            handledate: true,
             weekendDays: const [
               DateTime.saturday,
             ],

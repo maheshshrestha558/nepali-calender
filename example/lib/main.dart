@@ -1,3 +1,4 @@
+import 'package:calendar_example/pages/NepaliCalendarPicker%20.dart';
 import 'package:calendar_example/pages/dynamic_calendar.dart';
 import 'package:calendar_example/pages/nepalieasydate.dart';
 import 'package:device_preview/device_preview.dart';
@@ -136,6 +137,15 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             const SizedBox(height: 30.0),
+            ElevatedButton(
+              child: const Text('NepaliCalendarPicker'),
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NepaliCalendarPicker()));
+              },
+            ),
           ],
         ),
       ),

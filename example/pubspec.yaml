@@ -16,6 +16,7 @@ dependencies:
   flutter_bs_ad_calendar:
     path: ../
   intl: ^0.19.0
+  nepali_date_picker: ^6.0.1
   nepali_utils: ^3.0.3
 
 dev_dependencies:
