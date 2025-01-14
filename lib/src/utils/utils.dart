@@ -143,7 +143,7 @@ class Utils {
 
   /// True if the earliest allowable month is displayed.
   static bool isDisplayingFirstMonth(firstDate, selectedDate) {
-    DateTime date = firstDate ?? DateTime(1970);
+    DateTime date = firstDate ?? DateTime(1990);
     return !selectedDate.isAfter(
       DateTime(date.year, date.month),
     );

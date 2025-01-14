@@ -122,7 +122,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       const Duration monthScrollDuration = Duration(milliseconds: 100);
       _pageController.animateToPage(
-        DateTime.now().month,
+        _currentMonthIndex,
         duration: monthScrollDuration,
         curve: Curves.easeInOut,
       );
