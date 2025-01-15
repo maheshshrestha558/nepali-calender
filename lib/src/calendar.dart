@@ -222,18 +222,16 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   // on month changed
   void _handleMonthChanged(DateTime currentDate) {
-    if (widget.handledate == true) {
-      if (_focusedDate.year != currentDate.year ||
-          _focusedDate.month != currentDate.month) {
-        var date = widget.calendarType == CalendarType.ad
-            ? currentDate
-            : NepaliDateTime.fromDateTime(currentDate);
-        List<Event>? monthsEvents = widget.events
-            ?.where((item) => item.date?.month == currentDate.month)
-            .toList();
-        widget.onMonthChanged?.call(date, monthsEvents);
-      }
-    } else {}
+    if (_focusedDate.year != currentDate.year ||
+        _focusedDate.month != currentDate.month) {
+      var date = widget.calendarType == CalendarType.ad
+          ? currentDate
+          : NepaliDateTime.fromDateTime(currentDate);
+      List<Event>? monthsEvents = widget.events
+          ?.where((item) => item.date?.month == currentDate.month)
+          .toList();
+      widget.onMonthChanged?.call(date, monthsEvents);
+    }
   }
 
   // on date selected
