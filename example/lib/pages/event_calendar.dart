@@ -31,8 +31,8 @@ class _EventCalendarState extends State<EventCalendar> {
         color: Colors.red.withOpacity(0.1),
       ),
       Event(
-        startDate: DateTime(2024, 12, 18),
-        endDate: DateTime(2024, 12, 30),
+        startDate: DateTime(2024, 12, 28),
+        endDate: DateTime(2025, 1, 18),
         event: 'Special Event',
         color: Colors.orange.withOpacity(0.3),
       ),
@@ -57,12 +57,11 @@ class _EventCalendarState extends State<EventCalendar> {
       body: Column(
         children: [
           FlutterBSADCalendar(
-            calendarType: CalendarType.ad,
             initialDate: DateTime.now(),
             firstDate: DateTime(1970),
             lastDate: DateTime(2100),
             handledate: true,
-            nepalienglishtype: true,
+            calendarType: CalendarType.bs,
             weekendDays: const [
               DateTime.saturday,
             ],

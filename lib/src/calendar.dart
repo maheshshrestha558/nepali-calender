@@ -55,9 +55,6 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
   /// Decoration for selected day's cell.
   final BoxDecoration? selectedDayDecoration;
 
-  /// Function to build calendertype widget.
-  final bool nepalienglishtype;
-
   /// Builds the widget for particular day.
   final Widget Function(DateTime)? dayBuilder;
 
@@ -92,7 +89,6 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
     this.selectedDayDecoration,
     this.dayBuilder,
     this.headerheight,
-    this.nepalienglishtype = false,
     this.markerbool,
     required this.onDateSelected,
     this.onMonthChanged,
@@ -147,7 +143,9 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
       daysAfter = 7;
     }
 
-    final lastToDisplay = last.add(Duration(days: daysAfter));
+    // final lastToDisplay = last.add(Duration(days: daysAfter));
+    final lastToDisplay = last;
+
     return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
@@ -229,25 +227,13 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           _focusedDate.month != currentDate.month) {
         var date = widget.calendarType == CalendarType.ad
             ? currentDate
-            : currentDate.toNepaliDateTime();
+            : NepaliDateTime.fromDateTime(currentDate);
         List<Event>? monthsEvents = widget.events
             ?.where((item) => item.date?.month == currentDate.month)
             .toList();
         widget.onMonthChanged?.call(date, monthsEvents);
       }
-    } else {
-      if (_focusedDate.year != currentDate.year ||
-          _focusedDate.month != currentDate.month) {
-        // var date = widget.calendarType == CalendarType.ad
-        //     ? currentDate
-        //     : currentDate.toNepaliDateTime();
-        var date = currentDate;
-        List<Event>? monthsEvents = widget.events
-            ?.where((item) => item.date?.month == currentDate.month)
-            .toList();
-        widget.onMonthChanged?.call(date, monthsEvents);
-      }
-    }
+    } else {}
   }
 
   // on date selected
@@ -290,8 +276,8 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
               day.month == _focusedDate.month) {
             return true;
           } else if (widget.calendarType == CalendarType.bs &&
-              day.toNepaliDateTime().month ==
-                  _focusedDate.toNepaliDateTime().month) {
+              NepaliDateTime.fromDateTime(day).month ==
+                  NepaliDateTime.fromDateTime(_focusedDate).month) {
             return true;
           }
         }
@@ -391,21 +377,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                   visible: _displayType == DatePickerMode.day,
                   child: Row(
                     children: [
-                      if (widget.nepalienglishtype == true)
-                        ElevatedButton(
-                          onPressed: () {
-                            if (widget.calendarType == CalendarType.ad) {
-                              setState(
-                                  () => widget.calendarType = CalendarType.bs);
-                            } else {
-                              setState(
-                                  () => widget.calendarType = CalendarType.ad);
-                            }
-                          },
-                          child: Text(widget.calendarType == CalendarType.bs
-                              ? 'En'
-                              : 'ने'),
-                        ),
                       IconButton(
                         icon: Icon(
                           Icons.chevron_left,
