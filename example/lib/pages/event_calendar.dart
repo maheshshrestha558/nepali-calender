@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
 
@@ -11,41 +9,50 @@ class EventCalendar extends StatefulWidget {
 }
 
 class _EventCalendarState extends State<EventCalendar> {
-  late List<Event> _events;
+  late List<Event> event;
   DateTime? selectedDate;
   List<Event>? selectedDateEvents;
+  DateTime focusDate = DateTime.now();
+  List<Event> monthEvents = []; // Events filtered by the current month
 
   @override
   void initState() {
     super.initState();
-
-    _events = _getEvents();
+    event = _getEvents();
+    _filterEventsByMonth(focusDate); // Filter events for the current month
   }
 
   List<Event> _getEvents() {
     return [
       Event(
-        startDate: DateTime(2024, 12, 15),
-        endDate: DateTime(2024, 12, 22),
+        startDate: DateTime(2025, 2, 1),
+        endDate: DateTime(2025, 2, 10),
         event: 'Public Holiday',
         color: Colors.red.withOpacity(0.1),
       ),
       Event(
-        startDate: DateTime(2024, 12, 28),
-        endDate: DateTime(2025, 1, 18),
+        startDate: DateTime(2025, 2, 10),
+        endDate: DateTime(2025, 2, 18),
         event: 'Special Event',
         color: Colors.orange.withOpacity(0.3),
+      ),
+      Event(
+        startDate: DateTime(2025, 1, 10),
+        endDate: DateTime(2025, 1, 18),
+        event: 'Special Event',
+        color: Colors.blueAccent.withOpacity(0.3),
       ),
       // Add more events here
     ];
   }
 
-  List<Event> _filterEventsByMonthDay(DateTime date) {
-    // Matches events based on month and day
-    return _events.where((event) {
-      return event.startDate!.month == date.month &&
-          event.startDate!.day == date.day;
-    }).toList();
+  void _filterEventsByMonth(DateTime date) {
+    setState(() {
+      monthEvents = event.where((event) {
+        return event.startDate!.month == date.month &&
+            event.startDate!.year == date.year;
+      }).toList();
+    });
   }
 
   @override
@@ -57,7 +64,7 @@ class _EventCalendarState extends State<EventCalendar> {
       body: Column(
         children: [
           FlutterBSADCalendar(
-            initialDate: DateTime.now(),
+            initialDate: DateTime.now().subtract(const Duration(days: 3)),
             firstDate: DateTime(1970),
             lastDate: DateTime(2100),
             handledate: true,
@@ -66,32 +73,40 @@ class _EventCalendarState extends State<EventCalendar> {
               DateTime.saturday,
             ],
             markerbool: false,
-            events: _events,
-            onMonthChanged: (date, events) {
-              setState(() {
-                selectedDate = date;
-                selectedDateEvents = _filterEventsByMonthDay(date);
-                log("$selectedDateEvents");
-              });
+            events: event,
+            onMonthChanged: (date, event) {
+              // Update the filtered events when the month changes
+              _filterEventsByMonth(date);
             },
-            onDateSelected: (date, events) {
-              setState(() {
-                selectedDate = date;
-                selectedDateEvents = _filterEventsByMonthDay(date);
-              });
+            onDateSelected: (focusDate, events) {
+              // setState(() {
+              //   selectedDate = focusDate;
+              //   selectedDateEvents = events;
+              // });
             },
           ),
           Expanded(
             child: ListView.builder(
-                itemCount:
-                    selectedDateEvents != null ? selectedDateEvents!.length : 0,
-                itemBuilder: (context, index) {
-                  var data = selectedDateEvents![index];
-                  return ListTile(
-                    title: Text("${data.event}"),
-                  );
-                }),
-          )
+              itemCount: monthEvents.length,
+              itemBuilder: (context, index) {
+                var event = monthEvents[index];
+                return ListTile(
+                  title: Text(event.event ?? "No Event"),
+                  subtitle: Text(
+                    "${event.startDate!.toLocal()} - ${event.endDate!.toLocal()}",
+                  ),
+                  leading: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: event.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
