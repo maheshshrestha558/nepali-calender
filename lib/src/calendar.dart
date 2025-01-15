@@ -170,13 +170,13 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
-  void _handleDisplayTypeChanged() {
-    setState(() {
-      _displayType = _displayType == DatePickerMode.day
-          ? DatePickerMode.year
-          : DatePickerMode.day;
-    });
-  }
+  // void _handleDisplayTypeChanged() {
+  //   setState(() {
+  //     _displayType = _displayType == DatePickerMode.day
+  //         ? DatePickerMode.year
+  //         : DatePickerMode.day;
+  //   });
+  // }
 
   void _handleMonthPageChanged(int monthPage) {
     if (monthPage > _currentMonthIndex) {
@@ -197,18 +197,18 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
   }
 
   // on year changed
-  void _handleYearChanged(DateTime value) {
-    if (value.isBefore(widget.firstDate)) {
-      value = widget.firstDate;
-    } else if (value.isAfter(widget.lastDate)) {
-      value = widget.lastDate;
-    }
-    _displayType = DatePickerMode.day;
-    focusedDate = value;
-    _selectedDate = value;
-    _handleMonthChanged(value);
-    setState(() {});
-  }
+  // void _handleYearChanged(DateTime value) {
+  //   if (value.isBefore(widget.firstDate)) {
+  //     value = widget.firstDate;
+  //   } else if (value.isAfter(widget.lastDate)) {
+  //     value = widget.lastDate;
+  //   }
+  //   _displayType = DatePickerMode.day;
+  //   focusedDate = value;
+  //   _selectedDate = value;
+  //   _handleMonthChanged(value);
+  //   setState(() {});
+  // }
 
   // on month changed
   void _handleMonthChanged(DateTime currentDate) {
@@ -329,28 +329,28 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   // Widget _buildWeekRow(BuildContext context, int index) {}
 
-  Widget _buildYearPicker() {
-    switch (widget.calendarType) {
-      case CalendarType.ad:
-        return YearPicker(
-          currentDate: _selectedDate,
-          firstDate: widget.firstDate,
-          lastDate: widget.lastDate,
-          initialDate: focusedDate,
-          selectedDate: _selectedDate,
-          onChanged: _handleYearChanged,
-        );
-      case CalendarType.bs:
-        return NepaliYearPicker(
-          currentDate: _selectedDate.toNepaliDateTime(),
-          firstDate: widget.firstDate.toNepaliDateTime(),
-          lastDate: widget.lastDate.toNepaliDateTime(),
-          initialDate: focusedDate.toNepaliDateTime(),
-          selectedDate: _selectedDate.toNepaliDateTime(),
-          onChanged: (date) => _handleYearChanged(date.toDateTime()),
-        );
-    }
-  }
+  // Widget _buildYearPicker() {
+  //   switch (widget.calendarType) {
+  //     case CalendarType.ad:
+  //       return YearPicker(
+  //         currentDate: _selectedDate,
+  //         firstDate: widget.firstDate,
+  //         lastDate: widget.lastDate,
+  //         initialDate: focusedDate,
+  //         selectedDate: _selectedDate,
+  //         onChanged: _handleYearChanged,
+  //       );
+  //     case CalendarType.bs:
+  //       return NepaliYearPicker(
+  //         currentDate: _selectedDate.toNepaliDateTime(),
+  //         firstDate: widget.firstDate.toNepaliDateTime(),
+  //         lastDate: widget.lastDate.toNepaliDateTime(),
+  //         initialDate: focusedDate.toNepaliDateTime(),
+  //         selectedDate: _selectedDate.toNepaliDateTime(),
+  //         onChanged: (date) => _handleYearChanged(date.toDateTime()),
+  //       );
+  //   }
+  // }
 
   Color? _getEventColor(DateTime date) {
     // Check if there are events on the specific date
@@ -405,14 +405,11 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: _handleDisplayTypeChanged,
-                  child: MonthName(
-                    headerheight: widget.headerheight,
-                    date: focusedDate,
-                    primaryColor: widget.primaryColor,
-                    calendarType: widget.calendarType,
-                  ),
+                MonthName(
+                  headerheight: widget.headerheight,
+                  date: focusedDate,
+                  primaryColor: widget.primaryColor,
+                  calendarType: widget.calendarType,
                 ),
                 Visibility(
                   visible: _displayType == DatePickerMode.day,
@@ -475,203 +472,185 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
               ],
             ),
           const SizedBox(height: 5.0),
-          _displayType == DatePickerMode.day
-              ? Expanded(
-                  child: GestureDetector(
-                    onHorizontalDragUpdate: (details) {
-                      if (details.primaryDelta! > 0) {
-                        // Handle swipe right
-                        _handleMonthPageChanged(_currentMonthIndex + 1);
-                      } else if (details.primaryDelta! < 0) {
-                        // Handle swipe left
-                        _handleMonthPageChanged(_currentMonthIndex - 1);
-                      }
-                    },
-                    child: PageView.builder(
-                      controller: _pageController,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: DateUtils.monthDelta(
-                              widget.firstDate, widget.lastDate) +
-                          1,
-                      onPageChanged: _handleMonthPageChanged,
-                      itemBuilder: (context, index) {
-                        return GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _daysInMonth.length,
-                          padding: EdgeInsets.zero,
-                          gridDelegate: _daysInMonth.length == 35
-                              ? SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: weeks.length,
-                                  mainAxisExtent: 60)
-                              : SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: weeks.length,
-                                  mainAxisExtent: 50),
-                          itemBuilder: (context, dayIndex) {
-                            DateTime dayToBuild = _daysInMonth[dayIndex];
-                            Color? mainDayColor;
-                            Color? secondaryDayColor =
-                                Theme.of(context).textTheme.bodyMedium?.color;
-                            BoxDecoration decoration = const BoxDecoration();
+          Expanded(
+            child: GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                if (details.primaryDelta! > 0) {
+                  // Handle swipe right
+                  _handleMonthPageChanged(_currentMonthIndex + 1);
+                } else if (details.primaryDelta! < 0) {
+                  // Handle swipe left
+                  _handleMonthPageChanged(_currentMonthIndex - 1);
+                }
+              },
+              child: PageView.builder(
+                controller: _pageController,
+                scrollDirection: Axis.horizontal,
+                itemCount:
+                    DateUtils.monthDelta(widget.firstDate, widget.lastDate) + 1,
+                onPageChanged: _handleMonthPageChanged,
+                itemBuilder: (context, index) {
+                  return GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _daysInMonth.length,
+                    padding: EdgeInsets.zero,
+                    gridDelegate: _daysInMonth.length == 35
+                        ? SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: weeks.length, mainAxisExtent: 60)
+                        : SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: weeks.length, mainAxisExtent: 50),
+                    itemBuilder: (context, dayIndex) {
+                      DateTime dayToBuild = _daysInMonth[dayIndex];
+                      Color? mainDayColor;
+                      Color? secondaryDayColor =
+                          Theme.of(context).textTheme.bodyMedium?.color;
+                      BoxDecoration decoration = const BoxDecoration();
 
-                            if (Utils.isSameDay(dayToBuild, _selectedDate) &&
-                                Utils.isSameMonth(widget.calendarType,
-                                    focusedDate, dayToBuild)) {
-                              mainDayColor = Colors.white;
-                              decoration = widget.selectedDayDecoration ??
-                                  BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    border: Border.all(
-                                      color: Theme.of(context).dividerColor,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  );
-                            } else if (Utils.isToday(dayToBuild)) {
-                              mainDayColor = Theme.of(context).primaryColorDark;
-                              decoration = widget.todayDecoration ??
-                                  BoxDecoration(
-                                    color: Theme.of(context).primaryColorLight,
-                                    shape: BoxShape.circle,
-                                  );
-                            } else if (!Utils.isSameMonth(
-                                widget.calendarType, focusedDate, dayToBuild)) {
-                              mainDayColor = Colors.grey.withOpacity(0.5);
-                              secondaryDayColor = Colors.grey.withOpacity(0.5);
-                            } else if (Utils.isWeekend(dayToBuild,
-                                weekendDays: widget.weekendDays)) {
-                              mainDayColor = widget.holidayColor ??
-                                  Theme.of(context).colorScheme.secondary;
-                            } else if (Utils.holidays(
-                                dayToBuild, widget.holidays)) {
-                              mainDayColor = widget.holidayColor ??
-                                  Theme.of(context).colorScheme.secondary;
-                            } else {
-                              mainDayColor =
-                                  Theme.of(context).textTheme.bodyMedium?.color;
-                            }
-                            final eventMarkerColor = _getEventColor(dayToBuild);
-                            final eventColors = _getEventColors(dayToBuild);
-                            final limitedEventColors =
-                                eventColors.take(4).toList();
-
-                            return GestureDetector(
-                              onTap: () {
-                                if (Utils.isSameMonth(widget.calendarType,
-                                    focusedDate, dayToBuild)) {
-                                  _handleDateSelected(dayToBuild);
-                                }
-                              },
-                              child: Container(
-                                decoration: decoration,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 3.0,
-                                  vertical: 2.0,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    widget.dayBuilder == null
-                                        ? DayBuilder(
-                                            dayToBuild: dayToBuild,
-                                            calendarType: widget.calendarType,
-                                            dayColor: mainDayColor,
-                                            secondaryDayColor:
-                                                secondaryDayColor,
-                                          )
-                                        : widget.dayBuilder!(dayToBuild),
-                                    if (eventMarkerColor != null)
-                                      Align(
-                                        alignment: Alignment.bottomLeft,
-                                        child: Visibility(
-                                          visible:
-                                              _checkEventOnDate(dayToBuild),
-                                          child: widget.markerbool == true
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.0,
-                                                      bottom:
-                                                          10.0 + (index * 6)),
-                                                  child: Container(
-                                                    width: 5.0,
-                                                    height: 5.0,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          widget.eventColor ??
-                                                              eventMarkerColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1000.0),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(
-                                                  width: 50.0,
-                                                  height: 55.0,
-                                                  decoration: BoxDecoration(
-                                                    color: widget.eventColor ??
-                                                        eventMarkerColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                    // Display multiple event markers if events exist
-                                    if (eventColors.isNotEmpty)
-                                      ...limitedEventColors
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        Color markerColor = entry.value;
-
-                                        return Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: widget.markerbool == true
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.0,
-                                                      bottom:
-                                                          10.0 + (index * 6)),
-                                                  child: Container(
-                                                    width: 5.0,
-                                                    height: 5.0,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          widget.eventColor ??
-                                                              markerColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1000.0),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(
-                                                  width: 50.0,
-                                                  height: 55.0,
-                                                  decoration: BoxDecoration(
-                                                    color: widget.eventColor ??
-                                                        markerColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
-                                                ),
-                                        );
-                                      }).toList(),
-                                  ],
-                                ),
+                      if (Utils.isSameDay(dayToBuild, _selectedDate) &&
+                          Utils.isSameMonth(
+                              widget.calendarType, focusedDate, dayToBuild)) {
+                        mainDayColor = Colors.white;
+                        decoration = widget.selectedDayDecoration ??
+                            BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              border: Border.all(
+                                color: Theme.of(context).dividerColor,
                               ),
+                              shape: BoxShape.circle,
                             );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                )
-              : Expanded(
-                  child: _buildYearPicker(),
-                ),
+                      } else if (Utils.isToday(dayToBuild)) {
+                        mainDayColor = Theme.of(context).primaryColorDark;
+                        decoration = widget.todayDecoration ??
+                            BoxDecoration(
+                              color: Theme.of(context).primaryColorLight,
+                              shape: BoxShape.circle,
+                            );
+                      } else if (!Utils.isSameMonth(
+                          widget.calendarType, focusedDate, dayToBuild)) {
+                        mainDayColor = Colors.grey.withOpacity(0.5);
+                        secondaryDayColor = Colors.grey.withOpacity(0.5);
+                      } else if (Utils.isWeekend(dayToBuild,
+                          weekendDays: widget.weekendDays)) {
+                        mainDayColor = widget.holidayColor ??
+                            Theme.of(context).colorScheme.secondary;
+                      } else if (Utils.holidays(dayToBuild, widget.holidays)) {
+                        mainDayColor = widget.holidayColor ??
+                            Theme.of(context).colorScheme.secondary;
+                      } else {
+                        mainDayColor =
+                            Theme.of(context).textTheme.bodyMedium?.color;
+                      }
+                      final eventMarkerColor = _getEventColor(dayToBuild);
+                      final eventColors = _getEventColors(dayToBuild);
+                      final limitedEventColors = eventColors.take(4).toList();
+
+                      return GestureDetector(
+                        onTap: () {
+                          if (Utils.isSameMonth(
+                              widget.calendarType, focusedDate, dayToBuild)) {
+                            _handleDateSelected(dayToBuild);
+                          }
+                        },
+                        child: Container(
+                          decoration: decoration,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 3.0,
+                            vertical: 2.0,
+                          ),
+                          child: Stack(
+                            children: [
+                              widget.dayBuilder == null
+                                  ? DayBuilder(
+                                      dayToBuild: dayToBuild,
+                                      calendarType: widget.calendarType,
+                                      dayColor: mainDayColor,
+                                      secondaryDayColor: secondaryDayColor,
+                                    )
+                                  : widget.dayBuilder!(dayToBuild),
+                              if (eventMarkerColor != null)
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Visibility(
+                                    visible: _checkEventOnDate(dayToBuild),
+                                    child: widget.markerbool == true
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 10.0,
+                                                bottom: 10.0 + (index * 6)),
+                                            child: Container(
+                                              width: 5.0,
+                                              height: 5.0,
+                                              decoration: BoxDecoration(
+                                                color: widget.eventColor ??
+                                                    eventMarkerColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        1000.0),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 50.0,
+                                            height: 55.0,
+                                            decoration: BoxDecoration(
+                                              color: widget.eventColor ??
+                                                  eventMarkerColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              // Display multiple event markers if events exist
+                              if (eventColors.isNotEmpty)
+                                ...limitedEventColors
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  int index = entry.key;
+                                  Color markerColor = entry.value;
+
+                                  return Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: widget.markerbool == true
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 10.0,
+                                                bottom: 10.0 + (index * 6)),
+                                            child: Container(
+                                              width: 5.0,
+                                              height: 5.0,
+                                              decoration: BoxDecoration(
+                                                color: widget.eventColor ??
+                                                    markerColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        1000.0),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 50.0,
+                                            height: 55.0,
+                                            decoration: BoxDecoration(
+                                              color: widget.eventColor ??
+                                                  markerColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                  );
+                                }).toList(),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          )
         ],
       ),
     );
