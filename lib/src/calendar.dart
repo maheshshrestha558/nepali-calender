@@ -112,9 +112,8 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   @override
   void initState() {
-    super.initState();
-
     NepaliUtils(Language.nepali);
+    super.initState();
     _displayType = DatePickerMode.day;
     _daysInMonth = [];
     _selectedDate = DateTime.now();
@@ -222,9 +221,20 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     if (widget.handledate == true) {
       // Log to debug focusedDate and currentDate comparison
       log("Current focusedDate: $focusedDate, currentDate: $currentDate");
+      if (focusedDate.year != currentDate.year ||
+          focusedDate.month != currentDate.month) {
+        log("Condition not met: Month and year are the same.");
 
-      if (focusedDate.month == currentDate.month) {
-        log("Condition met: focusedDate.year != currentDate.year || focusedDate.month != currentDate.month");
+        var date = widget.calendarType == CalendarType.ad
+            ? currentDate
+            : currentDate.toNepaliDateTime();
+        List<Event>? monthsEvents = widget.events
+            ?.where((item) => item.date?.month == currentDate.month)
+            .toList();
+        widget.onMonthChanged?.call(date, monthsEvents);
+        setState(() {});
+      } else {
+        log("Condition met:  focusedDate.month == currentDate.month");
 
         // Handle calendar type and log the selected date
         var date = currentDate;
@@ -243,8 +253,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
         // Update the state
         setState(() {});
-      } else {
-        log("Condition not met: Month and year are the same.");
       }
     } else {
       log("widget.handledate is false, executing else block.");

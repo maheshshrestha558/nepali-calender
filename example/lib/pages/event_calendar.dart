@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bs_ad_calendar/flutter_bs_ad_calendar.dart';
+import 'package:nepali_utils/nepali_utils.dart';
 
 class EventCalendar extends StatefulWidget {
   const EventCalendar({Key? key}) : super(key: key);
@@ -9,17 +12,18 @@ class EventCalendar extends StatefulWidget {
 }
 
 class _EventCalendarState extends State<EventCalendar> {
-  late List<Event> event;
+  late List<Event> _events;
   DateTime? selectedDate;
   List<Event>? selectedDateEvents;
   DateTime focusDate = DateTime.now();
-  List<Event> monthEvents = []; // Events filtered by the current month
+  List<Event> monthEvents = []; // Events filtered by the current Nepali month
 
   @override
   void initState() {
     super.initState();
-    event = _getEvents();
-    _filterEventsByMonth(focusDate); // Filter events for the current month
+    _events = _getEvents();
+    _filterEventsByNepaliMonth(
+        focusDate); // Filter events for the current Nepali month
   }
 
   List<Event> _getEvents() {
@@ -46,11 +50,22 @@ class _EventCalendarState extends State<EventCalendar> {
     ];
   }
 
-  void _filterEventsByMonth(DateTime date) {
+  void _filterEventsByNepaliMonth(DateTime date) {
     setState(() {
-      monthEvents = event.where((event) {
-        return event.startDate!.month == date.month &&
-            event.startDate!.year == date.year;
+      // Convert Gregorian date to Nepali date
+      NepaliDateTime nepaliDate = NepaliDateTime.fromDateTime(date);
+      int nepaliMonth = nepaliDate.month;
+
+      // Filter events based on Nepali month
+      monthEvents = _events.where((event) {
+        NepaliDateTime eventStartNepali =
+            NepaliDateTime.fromDateTime(event.startDate!);
+        NepaliDateTime eventEndNepali =
+            NepaliDateTime.fromDateTime(event.endDate!);
+
+        // Check if the event falls within the Nepali month
+        return eventStartNepali.month == nepaliMonth ||
+            eventEndNepali.month == nepaliMonth;
       }).toList();
     });
   }
@@ -59,7 +74,7 @@ class _EventCalendarState extends State<EventCalendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar with Events'),
+        title: const Text('Nepali Calendar with Events'),
       ),
       body: Column(
         children: [
@@ -73,16 +88,16 @@ class _EventCalendarState extends State<EventCalendar> {
               DateTime.saturday,
             ],
             markerbool: false,
-            events: event,
-            onMonthChanged: (date, event) {
+            events: _events,
+            onMonthChanged: (focusDate, events) {
               // Update the filtered events when the month changes
-              _filterEventsByMonth(date);
+              _filterEventsByNepaliMonth(focusDate);
             },
             onDateSelected: (focusDate, events) {
-              // setState(() {
-              //   selectedDate = focusDate;
-              //   selectedDateEvents = events;
-              // });
+              setState(() {
+                selectedDate = focusDate;
+                selectedDateEvents = events;
+              });
             },
           ),
           Expanded(
