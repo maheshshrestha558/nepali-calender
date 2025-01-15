@@ -120,14 +120,13 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     _selectedDate = DateTime.now();
     focusedDate = widget.initialDate;
     _nepaliMonthDays = initializeDaysInMonths();
-    _currentMonthIndex = widget.initialDate.month;
+    _currentMonthIndex = widget.initialDate.month - 1;
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      const Duration monthScrollDuration = Duration(milliseconds: 100);
       _pageController.animateToPage(
-        DateTime.now().month,
-        duration: monthScrollDuration,
+        DateTime.now().month - 1,
+        duration: const Duration(milliseconds: 100),
         curve: Curves.easeInOut,
       );
     });
