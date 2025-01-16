@@ -117,7 +117,10 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     _displayType = DatePickerMode.day;
     _daysInMonth = [];
     _selectedDate = DateTime.now();
-    focusedDate = widget.initialDate;
+    focusedDate = widget.initialDate.day < 16
+        ? widget.initialDate.subtract(const Duration(days: 3))
+        : widget.initialDate;
+    log("mahesh${widget.initialDate.day}");
     _nepaliMonthDays = initializeDaysInMonths();
     _currentMonthIndex = widget.initialDate.month;
 
