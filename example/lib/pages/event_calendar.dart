@@ -79,7 +79,7 @@ class _EventCalendarState extends State<EventCalendar> {
       body: Column(
         children: [
           FlutterBSADCalendar(
-            initialDate: DateTime.now().subtract(const Duration(days: 3)),
+            initialDate: DateTime.now(),
             firstDate: DateTime(1970),
             lastDate: DateTime(2100),
             handledate: true,

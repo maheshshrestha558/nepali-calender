@@ -10,7 +10,7 @@ typedef OnMonthChanged<T> = Function(T focusedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
   /// The [CalendarType] displayed in the calendar.
-  CalendarType calendarType;
+  final CalendarType calendarType;
 
   /// The initially selected [DateTime] that the picker should display.
   final DateTime initialDate;
@@ -70,7 +70,7 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   /// Called when the user changes month.
   final OnMonthChanged? onMonthChanged;
-  FlutterBSADCalendar({
+  const FlutterBSADCalendar({
     Key? key,
     this.context,
     this.calendarType = CalendarType.bs,
@@ -119,12 +119,12 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     _selectedDate = DateTime.now();
     focusedDate = widget.initialDate;
     _nepaliMonthDays = initializeDaysInMonths();
-    _currentMonthIndex = widget.initialDate.month - 1;
+    _currentMonthIndex = widget.initialDate.month;
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _pageController.animateToPage(
-        DateTime.now().month - 1,
+        DateTime.now().month,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeInOut,
       );
@@ -152,11 +152,11 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
   /// Get the days in the month in nepali calendar
   List<DateTime> _nepaliDaysInMonth(DateTime date) {
     NepaliDateTime nepalitDate = date.toNepaliDateTime();
-    DateTime first =
-        NepaliDateTime(nepalitDate.year, nepalitDate.month, 1).toDateTime();
-    DateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
-            _nepaliMonthDays[nepalitDate.year]![nepalitDate.month])
-        .toDateTime();
+    NepaliDateTime first =
+        NepaliDateTime(nepalitDate.year, nepalitDate.month, 1);
+    NepaliDateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
+        _nepaliMonthDays[nepalitDate.year]![nepalitDate.month]);
+
     final daysBefore =
         (widget.mondayWeek ? first.weekday - 1 : first.weekday) % 7;
     final firstToDisplay = first.subtract(Duration(days: daysBefore));
@@ -167,7 +167,11 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     }
 
     final lastToDisplay = last.add(Duration(days: daysAfter));
-    return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
+    log("nepaliMonth${lastToDisplay.toDateTime()}");
+
+    return Utils.daysInRange(
+            firstToDisplay.toDateTime(), lastToDisplay.toDateTime())
+        .toList();
   }
 
   // void _handleDisplayTypeChanged() {
@@ -212,19 +216,9 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   // on month changed
   void _handleMonthChanged(DateTime currentDate) {
-    // Log to check if the function is being called
-    log("_handleMonthChanged called with currentDate=$currentDate");
-
-    // Check the value of widget.handledate
-    log("widget.handledate=${widget.handledate}");
-
     if (widget.handledate == true) {
-      // Log to debug focusedDate and currentDate comparison
-      log("Current focusedDate: $focusedDate, currentDate: $currentDate");
       if (focusedDate.year != currentDate.year ||
           focusedDate.month != currentDate.month) {
-        log("Condition not met: Month and year are the same.");
-
         var date = widget.calendarType == CalendarType.ad
             ? currentDate
             : currentDate.toNepaliDateTime();
@@ -234,45 +228,19 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
         widget.onMonthChanged?.call(date, monthsEvents);
         setState(() {});
       } else {
-        log("Condition met:  focusedDate.month == currentDate.month");
-
-        // Handle calendar type and log the selected date
         var date = currentDate;
-        log("Selected date based on calendarType: $date");
-
-        // Filter the events for the current month
         List<Event>? monthsEvents = widget.events
             ?.where((item) => item.date?.month == currentDate.month)
             .toList();
-
-        // Log the filtered events for the selected month
-        log("Filtered events for month ${currentDate.month}: $monthsEvents");
-
-        // Call the onMonthChanged callback
         widget.onMonthChanged?.call(date, monthsEvents);
-
-        // Update the state
         setState(() {});
       }
     } else {
-      log("widget.handledate is false, executing else block.");
-
-      // Handle the else case and log the selected date
       var date = currentDate;
-      log("Selected date: $date");
-
-      // Filter the events for the current month
       List<Event>? monthsEvents = widget.events
           ?.where((item) => item.date?.month == currentDate.month)
           .toList();
-
-      // Log the filtered events for the selected month
-      log("Filtered events for month ${currentDate.month}: $monthsEvents");
-
-      // Call the onDateSelected callback
       widget.onDateSelected.call(date, monthsEvents);
-
-      // Update the state
       setState(() {});
     }
   }
