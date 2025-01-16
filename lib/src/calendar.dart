@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:nepali_utils/nepali_utils.dart';
 
@@ -120,7 +118,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     focusedDate = widget.initialDate.day < 16
         ? widget.initialDate.subtract(const Duration(days: 3))
         : widget.initialDate;
-    log("mahesh${widget.initialDate.day}");
     _nepaliMonthDays = initializeDaysInMonths();
     _currentMonthIndex = widget.initialDate.month;
 
@@ -155,7 +152,6 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
   /// Get the days in the month in nepali calendar
   List<DateTime> _nepaliDaysInMonth(DateTime date) {
     DateTime nepalitDate = date.toNepaliDateTime();
-    log("kkm$nepalitDate");
 
     NepaliDateTime first =
         NepaliDateTime(nepalitDate.year, nepalitDate.month, 1);
@@ -191,17 +187,13 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           focusedDate.month == 12 ? focusedDate.year + 1 : focusedDate.year;
       int month = focusedDate.month == 12 ? 1 : focusedDate.month + 1;
       focusedDate = DateTime(year, month, focusedDate.day);
-      log("elsefocusedDate$focusedDate");
       _currentMonthIndex = monthPage == 12 ? 0 : monthPage;
-      log("elsefocusedDate$_currentMonthIndex");
     } else {
       int year =
           focusedDate.month == 1 ? focusedDate.year - 1 : focusedDate.year;
       int month = focusedDate.month == 1 ? 12 : focusedDate.month - 1;
       focusedDate = DateTime(year, month, focusedDate.day);
-      log("elsefocusedDate$focusedDate");
       _currentMonthIndex = monthPage == 0 ? 12 : monthPage;
-      log("elsefocusedDate$_currentMonthIndex");
     }
     _handleMonthChanged(focusedDate);
     setState(() {});
