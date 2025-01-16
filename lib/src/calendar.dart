@@ -120,13 +120,14 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     focusedDate = widget.initialDate;
     _nepaliMonthDays = initializeDaysInMonths();
     _currentMonthIndex = widget.initialDate.month;
+
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _pageController.animateToPage(
         DateTime.now().month,
         duration: const Duration(milliseconds: 100),
-        curve: Curves.easeInOut,
+        curve: Curves.easeOut,
       );
     });
   }
@@ -143,15 +144,16 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
       daysAfter = 7;
     }
 
-    // final lastToDisplay = last.add(Duration(days: daysAfter));
-    final lastToDisplay = last;
+    final lastToDisplay = last.add(Duration(days: daysAfter));
 
     return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
   /// Get the days in the month in nepali calendar
   List<DateTime> _nepaliDaysInMonth(DateTime date) {
-    NepaliDateTime nepalitDate = date.toNepaliDateTime();
+    DateTime nepalitDate = date.toNepaliDateTime();
+    log("kkm$nepalitDate");
+
     NepaliDateTime first =
         NepaliDateTime(nepalitDate.year, nepalitDate.month, 1);
     NepaliDateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
@@ -160,14 +162,12 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     final daysBefore =
         (widget.mondayWeek ? first.weekday - 1 : first.weekday) % 7;
     final firstToDisplay = first.subtract(Duration(days: daysBefore));
-
     var daysAfter = 7 - (widget.mondayWeek ? last.weekday - 1 : last.weekday);
     if (daysAfter == 0) {
       daysAfter = 7;
     }
 
     final lastToDisplay = last.add(Duration(days: daysAfter));
-    log("nepaliMonth${lastToDisplay.toDateTime()}");
 
     return Utils.daysInRange(
             firstToDisplay.toDateTime(), lastToDisplay.toDateTime())
@@ -188,13 +188,17 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
           focusedDate.month == 12 ? focusedDate.year + 1 : focusedDate.year;
       int month = focusedDate.month == 12 ? 1 : focusedDate.month + 1;
       focusedDate = DateTime(year, month, focusedDate.day);
+      log("elsefocusedDate$focusedDate");
       _currentMonthIndex = monthPage == 12 ? 0 : monthPage;
+      log("elsefocusedDate$_currentMonthIndex");
     } else {
       int year =
           focusedDate.month == 1 ? focusedDate.year - 1 : focusedDate.year;
       int month = focusedDate.month == 1 ? 12 : focusedDate.month - 1;
       focusedDate = DateTime(year, month, focusedDate.day);
+      log("elsefocusedDate$focusedDate");
       _currentMonthIndex = monthPage == 0 ? 12 : monthPage;
+      log("elsefocusedDate$_currentMonthIndex");
     }
     _handleMonthChanged(focusedDate);
     setState(() {});

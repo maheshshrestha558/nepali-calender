@@ -169,6 +169,7 @@ class Utils {
     while (i.isBefore(end)) {
       yield i;
       i = i.add(const Duration(days: 1));
+      // i = i;
       var timeZoneDiff = i.timeZoneOffset - offset;
       if (timeZoneDiff.inSeconds != 0) {
         offset = i.timeZoneOffset;
