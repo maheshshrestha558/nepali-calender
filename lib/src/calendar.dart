@@ -468,6 +468,7 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                             crossAxisCount: weeks.length, mainAxisExtent: 50),
                     itemBuilder: (context, dayIndex) {
                       DateTime dayToBuild = _daysInMonth[dayIndex];
+
                       Color? mainDayColor;
                       Color? secondaryDayColor =
                           Theme.of(context).textTheme.bodyMedium?.color;
@@ -496,7 +497,8 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
                           widget.calendarType, focusedDate, dayToBuild)) {
                         mainDayColor = Colors.grey.withOpacity(0.5);
                         secondaryDayColor = Colors.grey.withOpacity(0.5);
-                      } else if (Utils.isWeekend(dayToBuild,
+                      } else if (Utils.isWeekend(
+                          widget.calendarType, dayToBuild,
                           weekendDays: widget.weekendDays)) {
                         mainDayColor = widget.holidayColor ??
                             Theme.of(context).colorScheme.secondary;

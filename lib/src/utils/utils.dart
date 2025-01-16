@@ -108,10 +108,13 @@ class Utils {
 
   /// Whether or not the day is saturday.
   static bool isWeekend(
+    CalendarType calendarType,
     DateTime day, {
     List<int> weekendDays = const [DateTime.saturday],
   }) {
-    return weekendDays.contains(day.weekday);
+    return weekendDays.contains(
+        calendarType == CalendarType.bs ? day.weekday + 1 : day.weekday);
+
     // if (weekend) {
     //   return DateFormat('EEEE').format(day) == 'Saturday' ||
     //       DateFormat('EEEE').format(day) == 'Sunday';
