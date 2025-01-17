@@ -3,10 +3,53 @@ import 'package:nepali_utils/nepali_utils.dart';
 
 import '../flutter_bs_ad_calendar.dart';
 
+const Duration _monthScrollDuration = Duration(milliseconds: 200);
+
 typedef OnSelectedDate<T> = Function(T selectedDate, List<Event>? events);
-typedef OnMonthChanged<T> = Function(T focusedDate, List<Event>? events);
+typedef OnMonthChanged<T> = Function(T selectedDate, List<Event>? events);
 
 class FlutterBSADCalendar<T> extends StatefulWidget {
+  FlutterBSADCalendar({
+    super.key,
+    this.calendarType = CalendarType.bs,
+    required DateTime initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
+    this.holidays,
+    this.mondayWeek = false,
+    this.weekendDays = const [DateTime.saturday],
+    this.events,
+    this.primaryColor,
+    this.weekColor,
+    this.holidayColor,
+    this.eventColor,
+    this.todayDecoration,
+    this.selectedDayDecoration,
+    this.dayBuilder,
+    required this.onDateSelected,
+    this.onMonthChanged,
+    this.handledate,
+    this.context,
+    this.calenderheight,
+    this.markerbool,
+    this.headerheight,
+  })  : initialDate = DateUtils.dateOnly(initialDate),
+        firstDate = DateUtils.dateOnly(firstDate),
+        lastDate = DateUtils.dateOnly(lastDate) {
+    assert(
+      !this.lastDate.isBefore(this.firstDate),
+      'lastDate ${this.lastDate} must be on or after firstDate ${this.firstDate}.',
+    );
+    assert(
+      !this.initialDate.isBefore(this.firstDate),
+      'initialDate ${this.initialDate} must be on or after firstDate ${this.firstDate}.',
+    );
+    assert(
+      !this.initialDate.isAfter(this.lastDate),
+      'initialDate ${this.initialDate} must be on or before lastDate ${this.lastDate}.',
+    );
+  }
+
   /// The [CalendarType] displayed in the calendar.
   final CalendarType calendarType;
 
@@ -66,36 +109,10 @@ class FlutterBSADCalendar<T> extends StatefulWidget {
 
   final double? headerheight;
 
-  /// Called when the user changes month.
   final OnMonthChanged? onMonthChanged;
-  const FlutterBSADCalendar({
-    Key? key,
-    this.context,
-    this.calendarType = CalendarType.bs,
-    required this.initialDate,
-    required this.firstDate,
-    required this.lastDate,
-    this.calenderheight,
-    this.holidays,
-    this.handledate,
-    this.mondayWeek = false,
-    this.weekendDays = const [DateTime.saturday],
-    this.events,
-    this.primaryColor,
-    this.weekColor,
-    this.holidayColor,
-    this.eventColor,
-    this.todayDecoration,
-    this.selectedDayDecoration,
-    this.dayBuilder,
-    this.headerheight,
-    this.markerbool,
-    required this.onDateSelected,
-    this.onMonthChanged,
-  }) : super(key: key);
 
   @override
-  State<FlutterBSADCalendar<T>> createState() => _FlutterBSADCalendarState<T>();
+  State<FlutterBSADCalendar> createState() => _FlutterBSADCalendarState();
 }
 
 class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
@@ -110,8 +127,9 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
 
   @override
   void initState() {
-    NepaliUtils(Language.nepali);
     super.initState();
+
+    NepaliUtils(Language.nepali);
     _displayType = DatePickerMode.day;
     _daysInMonth = [];
     _selectedDate = DateTime.now();
@@ -119,15 +137,14 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
         ? widget.initialDate.subtract(const Duration(days: 3))
         : widget.initialDate;
     _nepaliMonthDays = initializeDaysInMonths();
-    _currentMonthIndex = widget.initialDate.month;
-
+    _currentMonthIndex = widget.initialDate.month - 1;
     _pageController = PageController(initialPage: _currentMonthIndex);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _pageController.animateToPage(
-        DateTime.now().month,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
+        DateTime.now().month - 1,
+        duration: _monthScrollDuration,
+        curve: Curves.easeInOut,
       );
     });
   }
@@ -145,32 +162,28 @@ class _FlutterBSADCalendarState<T> extends State<FlutterBSADCalendar<T>> {
     }
 
     final lastToDisplay = last.add(Duration(days: daysAfter));
-
     return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
   /// Get the days in the month in nepali calendar
   List<DateTime> _nepaliDaysInMonth(DateTime date) {
-    DateTime nepalitDate = date.toNepaliDateTime();
-
-    NepaliDateTime first =
-        NepaliDateTime(nepalitDate.year, nepalitDate.month, 1);
-    NepaliDateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
-        _nepaliMonthDays[nepalitDate.year]![nepalitDate.month]);
-
+    NepaliDateTime nepalitDate = date.toNepaliDateTime();
+    DateTime first =
+        NepaliDateTime(nepalitDate.year, nepalitDate.month, 1).toDateTime();
+    DateTime last = NepaliDateTime(nepalitDate.year, nepalitDate.month,
+            _nepaliMonthDays[nepalitDate.year]![nepalitDate.month])
+        .toDateTime();
     final daysBefore =
         (widget.mondayWeek ? first.weekday - 1 : first.weekday) % 7;
     final firstToDisplay = first.subtract(Duration(days: daysBefore));
+
     var daysAfter = 7 - (widget.mondayWeek ? last.weekday - 1 : last.weekday);
     if (daysAfter == 0) {
       daysAfter = 7;
     }
 
     final lastToDisplay = last.add(Duration(days: daysAfter));
-
-    return Utils.daysInRange(
-            firstToDisplay.toDateTime(), lastToDisplay.toDateTime())
-        .toList();
+    return Utils.daysInRange(firstToDisplay, lastToDisplay).toList();
   }
 
   // void _handleDisplayTypeChanged() {

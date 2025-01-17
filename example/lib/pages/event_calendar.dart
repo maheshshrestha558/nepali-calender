@@ -85,9 +85,8 @@ class _EventCalendarState extends State<EventCalendar> {
             handledate: true,
             calendarType: CalendarType.bs,
             weekendDays: const [
-              DateTime.tuesday,
+              DateTime.saturday,
             ],
-            mondayWeek: true,
             markerbool: false,
             events: _events,
             onMonthChanged: (focusDate, events) {

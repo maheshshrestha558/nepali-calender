@@ -112,8 +112,7 @@ class Utils {
     DateTime day, {
     List<int> weekendDays = const [DateTime.saturday],
   }) {
-    return weekendDays.contains(
-        calendarType == CalendarType.bs ? day.weekday + 1 : day.weekday);
+    return weekendDays.contains(day.weekday);
 
     // if (weekend) {
     //   return DateFormat('EEEE').format(day) == 'Saturday' ||
